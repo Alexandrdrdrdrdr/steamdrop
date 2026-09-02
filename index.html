@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SteamDrop Quests</title>
+    <!-- Подключаем скрипт Telegram Web App -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--tg-theme-bg-color, #121212);
+            color: var(--tg-theme-text-color, #ffffff);
+            padding: 20px;
+            text-align: center;
+        }
+        .card {
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: var(--tg-theme-secondary-bg-color, #1e1e1e);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        button {
+            background-color: var(--tg-theme-button-color, #0088cc);
+            color: var(--tg-theme-button-text-color, #ffffff);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>🎯 Выполняй задания SteamDrop</h2>
+    
+
+    <div class="card">
+        <h3>📋 Платные опросы</h3>
+        <p>Пройди опрос и получи от 500 баллов</p>
+        <button onclick="openOffers()">Открыть опросы </button>
+    </div>
+
+    <div class="card">
+        <h3>👀 Просмотр сайтов</h3>
+        <p>Смотри сайты и подписывайся на каналы</p>
+        <button onclick="openTimeWall()">Смотреть задания (TimeWall)</button>
+    </div>
+
+    <script>
+        // Инициализируем Telegram Web App
+        const tg = window.Telegram.WebApp;
+        tg.expand(); // Разворачиваем окно на весь экран
+
+        // Получаем ID пользователя Telegram
+        const userId = tg.initDataUnsafe?.user?.id || "demo_user";
+
+        function openOffers() {
+            // Ссылка CPX Research (вместо YOUR_APP_ID позже подставим id из кабинета)
+            const cpxUrl = `https://offers.cpx-research.com/index.php?app_id=YOUR_APP_ID&ext_user_id=${userId}`;
+            tg.openLink(cpxUrl);
+        }
+
+        function openTimeWall() {
+            alert("Раздел TimeWall в разработке! Скоро добавим.");
+        }
+    </script>
+</body>
+</html>
