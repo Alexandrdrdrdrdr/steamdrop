@@ -66,7 +66,7 @@
     <div class="header">
         <div class="title">🎮 SteamDrop</div>
         <div class="subtitle">Твой баланс:</div>
-        <div class="balance-box"><span id="balance">0</span> 💎</div>
+        <div class="balance-box"><span id="balance">...</span> 💎</div>
         <div class="subtitle">1000 💎 ≈ $1.00 Steam Gift Card</div>
     </div>
 
@@ -75,13 +75,14 @@
         <div class="card daily-card" onclick="claimDailyDrop()">
             <div class="card-icon">🔥</div>
             <div class="card-title">Серия Дропов</div>
-            <div class="card-sub" id="streak-text">от 30 и больше 💎</div>
+            <div class="card-sub" id="streak-text">Загрузка...</div>
         </div>
     </div>
 
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
+        tg.ready(); // Инициализация Telegram WebApp API
 
         const SERVER_URL = "https://swan-prissy-poking.ngrok-free.dev"; 
 
@@ -95,7 +96,12 @@
 
         async function loadUserData() {
             let userId = tg.initDataUnsafe?.user?.id;
-            if (!userId) return;
+            
+            if (!userId) {
+                document.getElementById("balance").innerText = "0";
+                document.getElementById("streak-text").innerText = "Запустите в Telegram";
+                return;
+            }
 
             try {
                 let response = await fetch(`${SERVER_URL}/api/user?user_id=${userId}`);
@@ -103,14 +109,14 @@
 
                 if (result.success) {
                     document.getElementById("balance").innerText = result.balance;
-                    if (result.streak_days > 0) {
-                        document.getElementById("streak-text").innerText = `Стрик: ${result.streak_days} дн.`;
-                    }
+                    document.getElementById("streak-text").innerText = result.streak_days > 0 
+                        ? `Стрик: ${result.streak_days} дн.` 
+                        : "Забрать бонус";
                 } else {
-                    notify("Ошибка базы: " + result.message);
+                    notify("Ошибка загрузки: " + result.message);
                 }
             } catch (e) {
-                notify("Не удалось загрузить баланс с сервера!");
+                notify("Ошибка подключения к серверу!");
             }
         }
 
