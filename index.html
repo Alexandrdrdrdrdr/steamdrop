@@ -139,10 +139,17 @@
 
         function claimDailyDrop() {
             if (tg && tg.sendData) {
+                // Выводим системное уведомление перед закрытием
+                if (tg.showAlert) {
+                    tg.showAlert("Запрос отправлен! Проверьте чат с ботом.");
+                }
+                
                 tg.sendData(JSON.stringify({ action: "claim_daily_drop" }));
+                
+                // Даем задержку в 500мс, чтобы запрос успел уйти без сброса соединения
                 setTimeout(() => {
                     tg.close();
-                }, 100);
+                }, 500);
             } else {
                 alert("Запустите Mini App внутри Telegram!");
             }
