@@ -10,7 +10,6 @@
             --bg-color: #0d121d;
             --card-bg: #1b2838;
             --accent-blue: #66c0f4;
-            --accent-green: #5c7e10;
             --text-color: #f3f3f3;
             --text-muted: #8f98a0;
         }
@@ -101,13 +100,12 @@
         <div class="subtitle" id="t-rate">1000 💎 ≈ $1.00 Steam Gift Card</div>
     </div>
 
-    <div class="section-title" id="t-section-tasks">⚡ Задания и бонус</div>
+    <div class="section-title" id="t-section-tasks">⚡ Задания и серия бонусов</div>
     <div class="grid">
-        <!-- Карточка Ежедневного Дропа -->
         <div class="card daily-card" onclick="claimDailyDrop()">
-            <div class="card-icon">🎁</div>
-            <div class="card-title" id="t-card-drop-title">Ежедневный Дроп</div>
-            <div class="card-sub" id="t-card-drop-sub">+25 💎 (сброс в 03:00)</div>
+            <div class="card-icon">🔥</div>
+            <div class="card-title" id="t-card-drop-title">Серия Дропов</div>
+            <div class="card-sub" id="t-card-drop-sub">от +30 до +100+ 💎</div>
         </div>
         
         <div class="card" onclick="notify(i18n[currentLang].alertSub)">
@@ -142,9 +140,11 @@
         function claimDailyDrop() {
             if (tg && tg.sendData) {
                 tg.sendData(JSON.stringify({ action: "claim_daily_drop" }));
-                tg.close();
+                setTimeout(() => {
+                    tg.close();
+                }, 100);
             } else {
-                alert("Откройте приложение внутри Telegram!");
+                alert("Запустите Mini App внутри Telegram!");
             }
         }
 
@@ -152,9 +152,9 @@
             ru: {
                 yourBalance: "Твой баланс:",
                 rate: "1000 💎 ≈ $1.00 Steam Gift Card",
-                sectionTasks: "⚡ Задания и бонус",
-                cardDropTitle: "Ежедневный Дроп",
-                cardDropSub: "+25 💎 (сброс в 03:00)",
+                sectionTasks: "⚡ Задания и серия бонусов",
+                cardDropTitle: "Серия Дропов",
+                cardDropSub: "от +30 до +100+ 💎",
                 card1Title: "Подписки",
                 card1Sub: "+15 💎 / канал",
                 card2Title: "Опросы",
@@ -163,15 +163,14 @@
                 card3Sub: "+200 💎 за друга",
                 alertSub: "Подписки на каналы появятся скоро!",
                 alertSurvey: "Опросы CPX Research подключаются следующим шагом!",
-                alertRef: "Приглашай друзей через /start реф-ссылку!",
-                alertWithdraw: "Минимальный вывод: 5000 💎 ($5.00)"
+                alertRef: "Приглашай друзей через /start реф-ссылку!"
             },
             en: {
                 yourBalance: "Your Balance:",
                 rate: "1000 💎 ≈ $1.00 Steam Gift Card",
-                sectionTasks: "⚡ Tasks & Bonus",
-                cardDropTitle: "Daily Drop",
-                cardDropSub: "+25 💎 (reset at 03:00)",
+                sectionTasks: "⚡ Tasks & Bonus Streak",
+                cardDropTitle: "Drop Streak",
+                cardDropSub: "from +30 to +100+ 💎",
                 card1Title: "Subscriptions",
                 card1Sub: "+15 💎 / channel",
                 card2Title: "Surveys",
@@ -180,8 +179,7 @@
                 card3Sub: "+200 💎 per friend",
                 alertSub: "Channel subscriptions coming soon!",
                 alertSurvey: "CPX Research surveys connecting next!",
-                alertRef: "Invite friends via your /start ref link!",
-                alertWithdraw: "Minimum withdrawal: 5000 💎 ($5.00)"
+                alertRef: "Invite friends via your /start ref link!"
             }
         };
 
