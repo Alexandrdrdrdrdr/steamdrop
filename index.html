@@ -68,20 +68,6 @@
             margin: 10px 0;
         }
         .balance-box span { color: var(--accent-blue); }
-        .btn-main {
-            width: 100%;
-            background: linear-gradient(90deg, #a4d007, #537e00);
-            color: #fff;
-            border: none;
-            padding: 16px;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(83, 126, 0, 0.4);
-            transition: transform 0.1s;
-        }
-        .btn-main:active { transform: scale(0.97); }
         .section-title { font-size: 16px; font-weight: 700; margin: 20px 0 12px; color: #fff; }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .card {
@@ -110,26 +96,24 @@
         <div class="subtitle" id="t-rate">1000 💎 ≈ $1.00 Steam Gift Card</div>
     </div>
 
-    <button class="btn-main" id="t-daily-btn" onclick="claimDaily()">🎁 Забрать дневной бонус (+50 💎)</button>
-
     <div class="section-title" id="t-section-tasks">⚡ Задания и раздел фарма</div>
     <div class="grid">
-        <div class="card" onclick="alert(i18n[currentLang].alertSub)">
+        <div class="card" onclick="notify(i18n[currentLang].alertSub)">
             <div class="card-icon">📲</div>
             <div class="card-title" id="t-card1-title">Подписки</div>
             <div class="card-sub" id="t-card1-sub">+15 💎 / канал</div>
         </div>
-        <div class="card" onclick="alert(i18n[currentLang].alertSurvey)">
+        <div class="card" onclick="notify(i18n[currentLang].alertSurvey)">
             <div class="card-icon">📋</div>
             <div class="card-title" id="t-card2-title">Опросы</div>
             <div class="card-sub" id="t-card2-sub">до +500 💎</div>
         </div>
-        <div class="card" onclick="alert(i18n[currentLang].alertRef)">
+        <div class="card" onclick="notify(i18n[currentLang].alertRef)">
             <div class="card-icon">👥</div>
             <div class="card-title" id="t-card3-title">Друзья</div>
-            <div class="card-sub" id="t-card3-sub">+15% от друзей</div>
+            <div class="card-sub" id="t-card3-sub">+200 💎 за друга</div>
         </div>
-        <div class="card" onclick="alert(i18n[currentLang].alertWithdraw)">
+        <div class="card" onclick="notify(i18n[currentLang].alertWithdraw)">
             <div class="card-icon">🎁</div>
             <div class="card-title" id="t-card4-title">Вывод</div>
             <div class="card-sub" id="t-card4-sub">Steam Карты</div>
@@ -140,44 +124,48 @@
         let tg = window.Telegram.WebApp;
         tg.expand();
 
+        function notify(text) {
+            if (tg && tg.showAlert) {
+                tg.showAlert(text);
+            } else {
+                alert(text);
+            }
+        }
+
         const i18n = {
             ru: {
                 yourBalance: "Твой баланс:",
                 rate: "1000 💎 ≈ $1.00 Steam Gift Card",
-                dailyBtn: "🎁 Забрать дневной бонус (+50 💎)",
                 sectionTasks: "⚡ Задания и раздел фарма",
                 card1Title: "Подписки",
                 card1Sub: "+15 💎 / канал",
                 card2Title: "Опросы",
                 card2Sub: "до +500 💎",
                 card3Title: "Друзья",
-                card3Sub: "+15% от друзей",
+                card3Sub: "+200 💎 за друга",
                 card4Title: "Вывод",
                 card4Sub: "Steam Карты",
                 alertSub: "Подписки на каналы появятся скоро!",
-                alertSurvey: "Опросы CPX Research подключатся следующим шагом!",
+                alertSurvey: "Опросы CPX Research подключаются следующим шагом!",
                 alertRef: "Приглашай друзей через /start реф-ссылку!",
-                alertWithdraw: "Минимальный вывод: 1000 💎",
-                claimed: "Вы получили +50 💎!"
+                alertWithdraw: "Минимальный вывод: 5000 💎 ($5.00)"
             },
             en: {
                 yourBalance: "Your Balance:",
                 rate: "1000 💎 ≈ $1.00 Steam Gift Card",
-                dailyBtn: "🎁 Claim Daily Bonus (+50 💎)",
                 sectionTasks: "⚡ Tasks & Farming Section",
                 card1Title: "Subscriptions",
                 card1Sub: "+15 💎 / channel",
                 card2Title: "Surveys",
                 card2Sub: "up to +500 💎",
                 card3Title: "Friends",
-                card3Sub: "+15% from friends",
+                card3Sub: "+200 💎 per friend",
                 card4Title: "Withdraw",
                 card4Sub: "Steam Cards",
                 alertSub: "Channel subscriptions coming soon!",
-                alertSurvey: "CPX Research surveys will be connected next!",
+                alertSurvey: "CPX Research surveys connecting next!",
                 alertRef: "Invite friends via your /start ref link!",
-                alertWithdraw: "Minimum withdrawal: 1000 💎",
-                claimed: "You received +50 💎!"
+                alertWithdraw: "Minimum withdrawal: 5000 💎 ($5.00)"
             }
         };
 
@@ -197,7 +185,6 @@
             const t = i18n[lang];
             document.getElementById('t-your-balance').innerText = t.yourBalance;
             document.getElementById('t-rate').innerText = t.rate;
-            document.getElementById('t-daily-btn').innerText = t.dailyBtn;
             document.getElementById('t-section-tasks').innerText = t.sectionTasks;
             document.getElementById('t-card1-title').innerText = t.card1Title;
             document.getElementById('t-card1-sub').innerText = t.card1Sub;
@@ -209,17 +196,7 @@
             document.getElementById('t-card4-sub').innerText = t.card4Sub;
         }
 
-        let balance = localStorage.getItem('userBalance') || 0;
-        document.getElementById('balance').innerText = balance;
         setLang(currentLang);
-
-        function claimDaily() {
-            balance = parseInt(balance) + 50;
-            document.getElementById('balance').innerText = balance;
-            localStorage.setItem('userBalance', balance);
-            if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-            alert(i18n[currentLang].claimed);
-        }
     </script>
 </body>
 </html>
