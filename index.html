@@ -1,3 +1,4 @@
+<!-- === index.html === -->
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -30,32 +31,6 @@
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
             margin-bottom: 16px;
             border: 1px solid rgba(102, 192, 244, 0.2);
-        }
-        .lang-switch {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            display: flex;
-            gap: 4px;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 3px;
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .lang-btn {
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            padding: 4px 8px;
-            font-size: 11px;
-            font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .lang-btn.active {
-            background: var(--accent-blue);
-            color: #0d121d;
         }
         .title { font-size: 22px; font-weight: bold; margin-bottom: 6px; color: var(--accent-blue); }
         .subtitle { font-size: 13px; color: var(--text-muted); }
@@ -90,44 +65,27 @@
 </head>
 <body>
     <div class="header">
-        <div class="lang-switch">
-            <button id="btn-ru" onclick="setLang('ru')" class="lang-btn">RU</button>
-            <button id="btn-en" onclick="setLang('en')" class="lang-btn">EN</button>
-        </div>
         <div class="title">🎮 SteamDrop</div>
-        <div class="subtitle" id="t-your-balance">Твой баланс:</div>
+        <div class="subtitle">Твой баланс:</div>
         <div class="balance-box"><span id="balance">0</span> 💎</div>
-        <div class="subtitle" id="t-rate">1000 💎 ≈ $1.00 Steam Gift Card</div>
+        <div class="subtitle">1000 💎 ≈ $1.00 Steam Gift Card</div>
     </div>
 
-    <div class="section-title" id="t-section-tasks">⚡ Задания и серия бонусов</div>
+    <div class="section-title">⚡ Задания и бонус</div>
     <div class="grid">
         <div class="card daily-card" onclick="claimDailyDrop()">
             <div class="card-icon">🔥</div>
-            <div class="card-title" id="t-card-drop-title">Серия Дропов</div>
-            <div class="card-sub" id="t-card-drop-sub">от +30 до +100+ 💎</div>
-        </div>
-        
-        <div class="card" onclick="notify(i18n[currentLang].alertSub)">
-            <div class="card-icon">📲</div>
-            <div class="card-title" id="t-card1-title">Подписки</div>
-            <div class="card-sub" id="t-card1-sub">+15 💎 / канал</div>
-        </div>
-        <div class="card" onclick="notify(i18n[currentLang].alertSurvey)">
-            <div class="card-icon">📋</div>
-            <div class="card-title" id="t-card2-title">Опросы</div>
-            <div class="card-sub" id="t-card2-sub">до +500 💎</div>
-        </div>
-        <div class="card" onclick="notify(i18n[currentLang].alertRef)">
-            <div class="card-icon">👥</div>
-            <div class="card-title" id="t-card3-title">Друзья</div>
-            <div class="card-sub" id="t-card3-sub">+200 💎 за друга</div>
+            <div class="card-title">Серия Дропов</div>
+            <div class="card-sub">от +30 до +100+ 💎</div>
         </div>
     </div>
 
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
+
+        // Укажи URL твоего сервера/Ngrok/IP (по умолчанию для локала 8080)
+        const SERVER_URL = "http://localhost:8080"; 
 
         function notify(text) {
             if (tg && tg.showAlert) {
@@ -137,87 +95,33 @@
             }
         }
 
-        function claimDailyDrop() {
-            if (tg && tg.sendData) {
-                // Выводим системное уведомление перед закрытием
-                if (tg.showAlert) {
-                    tg.showAlert("Запрос отправлен! Проверьте чат с ботом.");
+        async function claimDailyDrop() {
+            let userId = tg.initDataUnsafe?.user?.id;
+            
+            if (!userId) {
+                notify("Ошибка: Запустите приложение внутри Telegram!");
+                return;
+            }
+
+            try {
+                let response = await fetch(`${SERVER_URL}/api/claim`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ user_id: userId })
+                });
+
+                let result = await response.json();
+
+                if (result.success) {
+                    document.getElementById("balance").innerText = result.new_balance;
+                    notify(result.message);
+                } else {
+                    notify(result.message);
                 }
-                
-                tg.sendData(JSON.stringify({ action: "claim_daily_drop" }));
-                
-                // Даем задержку в 500мс, чтобы запрос успел уйти без сброса соединения
-                setTimeout(() => {
-                    tg.close();
-                }, 500);
-            } else {
-                alert("Запустите Mini App внутри Telegram!");
+            } catch (e) {
+                notify("Ошибка подключения к серверу!");
             }
         }
-
-        const i18n = {
-            ru: {
-                yourBalance: "Твой баланс:",
-                rate: "1000 💎 ≈ $1.00 Steam Gift Card",
-                sectionTasks: "⚡ Задания и серия бонусов",
-                cardDropTitle: "Серия Дропов",
-                cardDropSub: "от +30 до +100+ 💎",
-                card1Title: "Подписки",
-                card1Sub: "+15 💎 / канал",
-                card2Title: "Опросы",
-                card2Sub: "до +500 💎",
-                card3Title: "Друзья",
-                card3Sub: "+200 💎 за друга",
-                alertSub: "Подписки на каналы появятся скоро!",
-                alertSurvey: "Опросы CPX Research подключаются следующим шагом!",
-                alertRef: "Приглашай друзей через /start реф-ссылку!"
-            },
-            en: {
-                yourBalance: "Your Balance:",
-                rate: "1000 💎 ≈ $1.00 Steam Gift Card",
-                sectionTasks: "⚡ Tasks & Bonus Streak",
-                cardDropTitle: "Drop Streak",
-                cardDropSub: "from +30 to +100+ 💎",
-                card1Title: "Subscriptions",
-                card1Sub: "+15 💎 / channel",
-                card2Title: "Surveys",
-                card2Sub: "up to +500 💎",
-                card3Title: "Friends",
-                card3Sub: "+200 💎 per friend",
-                alertSub: "Channel subscriptions coming soon!",
-                alertSurvey: "CPX Research surveys connecting next!",
-                alertRef: "Invite friends via your /start ref link!"
-            }
-        };
-
-        let currentLang = localStorage.getItem('appLang');
-        if (!currentLang) {
-            let tgLang = tg.initDataUnsafe?.user?.language_code;
-            currentLang = (tgLang && tgLang.startsWith('ru')) ? 'ru' : 'en';
-        }
-
-        function setLang(lang) {
-            currentLang = lang;
-            localStorage.setItem('appLang', lang);
-
-            document.getElementById('btn-ru').classList.toggle('active', lang === 'ru');
-            document.getElementById('btn-en').classList.toggle('active', lang === 'en');
-
-            const t = i18n[lang];
-            document.getElementById('t-your-balance').innerText = t.yourBalance;
-            document.getElementById('t-rate').innerText = t.rate;
-            document.getElementById('t-section-tasks').innerText = t.sectionTasks;
-            document.getElementById('t-card-drop-title').innerText = t.cardDropTitle;
-            document.getElementById('t-card-drop-sub').innerText = t.cardDropSub;
-            document.getElementById('t-card1-title').innerText = t.card1Title;
-            document.getElementById('t-card1-sub').innerText = t.card1Sub;
-            document.getElementById('t-card2-title').innerText = t.card2Title;
-            document.getElementById('t-card2-sub').innerText = t.card2Sub;
-            document.getElementById('t-card3-title').innerText = t.card3Title;
-            document.getElementById('t-card3-sub').innerText = t.card3Sub;
-        }
-
-        setLang(currentLang);
     </script>
 </body>
 </html>
