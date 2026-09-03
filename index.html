@@ -10,7 +10,7 @@
             --bg-color: #0d121d;
             --card-bg: #1b2838;
             --accent-blue: #66c0f4;
-            --accent-green: #5c7e10;
+            --accent-yellow: #ffc107;
             --text-color: #f3f3f3;
             --text-muted: #8f98a0;
         }
@@ -23,32 +23,29 @@
             user-select: none;
         }
         .header {
-            position: relative;
             background: linear-gradient(135deg, #171a21, #2a475e);
             border-radius: 16px;
-            padding: 20px;
+            padding: 16px;
             text-align: center;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
             margin-bottom: 16px;
             border: 1px solid rgba(102, 192, 244, 0.2);
         }
-        .title { font-size: 22px; font-weight: bold; margin-bottom: 6px; color: var(--accent-blue); }
-        .subtitle { font-size: 13px; color: var(--text-muted); }
+        .title { font-size: 20px; font-weight: bold; color: var(--accent-blue); }
+        .subtitle { font-size: 12px; color: var(--text-muted); }
         .balance-box {
-            font-size: 34px;
+            font-size: 32px;
             font-weight: 800;
             color: #ffffff;
             text-shadow: 0 0 12px rgba(102, 192, 244, 0.6);
-            margin: 10px 0;
+            margin: 6px 0;
         }
         .balance-box span { color: var(--accent-blue); }
 
-        /* Навигация переключения окон */
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        .section-title { font-size: 16px; font-weight: 700; margin: 20px 0 12px; color: #fff; }
-        .grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+        .section-title { font-size: 16px; font-weight: 700; margin: 16px 0 10px; text-align: center; }
         
         .card {
             background: var(--card-bg);
@@ -56,95 +53,190 @@
             padding: 16px;
             text-align: center;
             border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: transform 0.15s;
-            cursor: pointer;
-        }
-        .card:active { transform: scale(0.98); }
-        .card-icon { font-size: 36px; margin-bottom: 8px; }
-        .card-title { font-size: 16px; font-weight: bold; }
-        .card-sub { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
-        .daily-card {
-            background: linear-gradient(135deg, #2a475e, #1b2838);
-            border: 1px solid var(--accent-blue);
         }
 
-        /* Кнопка апгрейда */
-        .btn-upgrade {
-            margin-top: 14px;
-            background: linear-gradient(135deg, #a4d007, #5c7e10);
-            color: #fff;
-            border: none;
-            padding: 12px 24px;
-            font-size: 15px;
-            font-weight: bold;
-            border-radius: 8px;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(92, 126, 16, 0.4);
+        /* Стиль для CSGO Upgrade Колеса */
+        .wheel-container {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            margin: 15px auto;
+            border-radius: 50%;
+            background: #171a21;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(0,0,0,0.6);
+        }
+        .wheel-ring {
             width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(var(--accent-blue) 0% 45%, #2a3f5a 45% 100%);
+            transition: background 0.3s ease;
+        }
+        .wheel-inner {
+            position: absolute;
+            width: 140px;
+            height: 140px;
+            background: #0d121d;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+        }
+        .wheel-arrow {
+            position: absolute;
+            top: 5px;
+            width: 4px;
+            height: 85px;
+            background: var(--accent-yellow);
+            transform-origin: bottom center;
+            z-index: 3;
+            transition: transform 3s cubic-bezier(0.15, 0.9, 0.2, 1);
+            border-radius: 2px;
+            box-shadow: 0 0 8px var(--accent-yellow);
         }
 
-        /* Нижнее меню */
+        /* Инпуты апгрейдера */
+        .upgrader-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .input-box {
+            background: #101823;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 8px;
+            text-align: left;
+        }
+        .input-box label { font-size: 10px; color: var(--text-muted); display: block; }
+        .input-box input {
+            width: 90%;
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            outline: none;
+        }
+
+        .mult-btns {
+            display: flex;
+            justify-content: space-between;
+            gap: 6px;
+            margin: 12px 0;
+        }
+        .mult-btn {
+            flex: 1;
+            background: #171a21;
+            border: 1px solid rgba(102, 192, 244, 0.3);
+            color: var(--text-color);
+            padding: 6px 0;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .mult-btn.active {
+            background: var(--accent-blue);
+            color: #000;
+        }
+
+        .btn-upgrade {
+            background: linear-gradient(135deg, #ffc107, #ff8800);
+            color: #000;
+            border: none;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: 800;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            text-transform: uppercase;
+            box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
+        }
+
+        /* Навигация */
         .nav-bar {
             position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
+            bottom: 0; left: 0; right: 0;
             background: #171a21;
             display: flex;
             justify-content: space-around;
             padding: 10px 0;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 -4px 15px rgba(0,0,0,0.5);
         }
         .nav-item {
             color: var(--text-muted);
-            font-size: 12px;
+            font-size: 11px;
             text-align: center;
             cursor: pointer;
             flex: 1;
         }
-        .nav-item.active {
-            color: var(--accent-blue);
-            font-weight: bold;
-        }
-        .nav-icon { font-size: 20px; margin-bottom: 2px; }
+        .nav-item.active { color: var(--accent-blue); font-weight: bold; }
+        .nav-icon { font-size: 18px; margin-bottom: 2px; }
     </style>
 </head>
 <body>
-    <!-- Общая шапка с балансом -->
     <div class="header">
         <div class="title">🎮 SteamDrop</div>
         <div class="subtitle">Твой баланс:</div>
         <div class="balance-box"><span id="balance">...</span> 💎</div>
-        <div class="subtitle">1000 💎 ≈ $1.00 Steam Gift Card</div>
     </div>
 
     <!-- Вкладка 1: Главная -->
     <div id="tab-main" class="tab-content active">
         <div class="section-title">⚡ Ежедневный Бонус</div>
-        <div class="grid">
-            <div class="card daily-card" onclick="claimDailyDrop()">
-                <div class="card-icon">🔥</div>
-                <div class="card-title">Забрать Дроп</div>
-                <div class="card-sub" id="streak-text">Загрузка...</div>
-            </div>
+        <div class="card" onclick="claimDailyDrop()" style="cursor: pointer;">
+            <div style="font-size: 40px; margin-bottom: 6px;">🔥</div>
+            <div style="font-size: 16px; font-weight: bold;">Забрать Дроп</div>
+            <div class="subtitle" id="streak-text" style="margin-top: 4px;">Загрузка...</div>
         </div>
     </div>
 
-    <!-- Вкладка 2: Апгрейд Валюты -->
+    <!-- Вкладка 2: CSGO Upgrader -->
     <div id="tab-upgrade" class="tab-content">
-        <div class="section-title">🚀 Прокачка дохода</div>
+        <div class="section-title">⚡ Апгрейдер Баланса</div>
         <div class="card">
-            <div class="card-icon">💎</div>
-            <div class="card-title">Уровень Валюты: <span id="upgrade-lvl">1</span></div>
-            <div class="card-sub" id="upgrade-bonus-text">Текущий бонус: +0 💎/день</div>
-            <button class="btn-upgrade" onclick="buyUpgrade()">
-                Улучшить за <span id="upgrade-cost">150</span> 💎
-            </button>
+            
+            <div class="wheel-container">
+                <div class="wheel-ring" id="wheel-ring"></div>
+                <div class="wheel-arrow" id="wheel-arrow"></div>
+                <div class="wheel-inner">
+                    <span style="font-size: 11px; color: var(--text-muted);">Шанс</span>
+                    <span id="chance-display" style="font-size: 22px; font-weight: 800; color: var(--accent-yellow);">45%</span>
+                </div>
+            </div>
+
+            <div class="mult-btns">
+                <button class="mult-btn active" onclick="setMultiplier(1.5, this)">x1.5</button>
+                <button class="mult-btn" onclick="setMultiplier(2.0, this)">x2.0</button>
+                <button class="mult-btn" onclick="setMultiplier(5.0, this)">x5.0</button>
+                <button class="mult-btn" onclick="setMultiplier(10.0, this)">x10.0</button>
+            </div>
+
+            <div class="upgrader-inputs">
+                <div class="input-box">
+                    <label>Ставка (💎)</label>
+                    <input type="number" id="bet-input" value="100" oninput="updateCalculations()">
+                </div>
+                <div class="input-box">
+                    <label>Выиграешь (💎)</label>
+                    <input type="number" id="target-input" value="200" oninput="updateCalculationsFromTarget()">
+                </div>
+            </div>
+
+            <br>
+            <button class="btn-upgrade" id="upgrade-btn" onclick="playUpgrade()">🚀 ПРОКАЧАТЬ</button>
         </div>
     </div>
 
-    <!-- Нижняя панели навигации -->
+    <!-- Навигация -->
     <div class="nav-bar">
         <div class="nav-item active" onclick="switchTab('main', this)">
             <div class="nav-icon">🏠</div>
@@ -152,7 +244,7 @@
         </div>
         <div class="nav-item" onclick="switchTab('upgrade', this)">
             <div class="nav-icon">⚡</div>
-            Апгрейд
+            Апгрейдер
         </div>
     </div>
 
@@ -162,32 +254,56 @@
         tg.ready();
 
         const SERVER_URL = "https://swan-prissy-poking.ngrok-free.dev"; 
+        let currentMultiplier = 2.0;
+        let isSpinning = false;
 
         function notify(text) {
-            if (tg && tg.showAlert) {
-                tg.showAlert(text);
-            } else {
-                alert(text);
-            }
+            if (tg && tg.showAlert) tg.showAlert(text);
+            else alert(text);
         }
 
-        // Переключение окон
         function switchTab(tabName, el) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            
             document.getElementById(`tab-${tabName}`).classList.add('active');
             el.classList.add('active');
         }
 
+        function setMultiplier(mult, btn) {
+            currentMultiplier = mult;
+            document.querySelectorAll('.mult-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            let bet = parseInt(document.getElementById('bet-input').value) || 0;
+            document.getElementById('target-input').value = Math.round(bet * mult);
+            updateCalculations();
+        }
+
+        function updateCalculations() {
+            let bet = parseInt(document.getElementById('bet-input').value) || 0;
+            let target = parseInt(document.getElementById('target-input').value) || 0;
+
+            if (bet > 0 && target > bet) {
+                let chance = Math.min(90.0, Math.max(0.5, (bet / target) * 90.0));
+                document.getElementById('chance-display').innerText = chance.toFixed(1) + '%';
+                
+                // Обновляем визуал круга
+                document.getElementById('wheel-ring').style.background = 
+                    `conic-gradient(var(--accent-blue) 0% ${chance}%, #2a3f5a ${chance}% 100%)`;
+            } else {
+                document.getElementById('chance-display').innerText = '0%';
+            }
+        }
+
+        function updateCalculationsFromTarget() {
+            let bet = parseInt(document.getElementById('bet-input').value) || 0;
+            let target = parseInt(document.getElementById('target-input').value) || 0;
+            if (bet > 0) updateCalculations();
+        }
+
         async function loadUserData() {
             let userId = tg.initDataUnsafe?.user?.id;
-            
-            if (!userId) {
-                document.getElementById("balance").innerText = "0";
-                document.getElementById("streak-text").innerText = "Запустите в Telegram";
-                return;
-            }
+            if (!userId) return;
 
             try {
                 let response = await fetch(`${SERVER_URL}/api/user?user_id=${userId}`, {
@@ -200,77 +316,94 @@
                     document.getElementById("streak-text").innerText = result.streak_days > 0 
                         ? `Стрик: ${result.streak_days} дн.` 
                         : "Забрать бонус";
-                    
-                    // Обновляем данные прокачки
-                    document.getElementById("upgrade-lvl").innerText = result.upgrade_level;
-                    document.getElementById("upgrade-cost").innerText = result.upgrade_cost;
-                    document.getElementById("upgrade-bonus-text").innerText = `Текущий бонус: +${result.upgrade_bonus} 💎 к дропу`;
-                } else {
-                    notify("Ошибка загрузки: " + result.message);
                 }
-            } catch (e) {
-                notify("Ошибка подключения к серверу!");
-            }
+            } catch (e) {}
         }
 
         async function claimDailyDrop() {
             let userId = tg.initDataUnsafe?.user?.id;
-            if (!userId) { notify("Запустите в Telegram!"); return; }
+            if (!userId) return notify("Запустите в Telegram!");
 
             try {
                 let response = await fetch(`${SERVER_URL}/api/claim`, {
                     method: "POST",
-                    headers: { 
-                        "Content-Type": "application/json",
-                        "ngrok-skip-browser-warning": "true"
-                    },
+                    headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
                     body: JSON.stringify({ user_id: userId })
                 });
 
                 let result = await response.json();
-
                 if (result.success) {
                     document.getElementById("balance").innerText = result.new_balance;
                     document.getElementById("streak-text").innerText = `Стрик: ${result.streak} дн.`;
-                    notify(result.message);
-                } else {
-                    notify(result.message);
                 }
+                notify(result.message);
             } catch (e) {
                 notify("Ошибка подключения к серверу!");
             }
         }
 
-        async function buyUpgrade() {
+        async function playUpgrade() {
+            if (isSpinning) return;
+            
             let userId = tg.initDataUnsafe?.user?.id;
-            if (!userId) { notify("Запустите в Telegram!"); return; }
+            if (!userId) return notify("Запустите в Telegram!");
+
+            let bet = parseInt(document.getElementById('bet-input').value) || 0;
+            let target = parseInt(document.getElementById('target-input').value) || 0;
+
+            if (bet <= 0 || target <= bet) {
+                return notify("Укажите правильную ставку и цель!");
+            }
+
+            isSpinning = true;
+            document.getElementById('upgrade-btn').innerText = "ВРАЩЕНИЕ...";
 
             try {
                 let response = await fetch(`${SERVER_URL}/api/upgrade`, {
                     method: "POST",
-                    headers: { 
-                        "Content-Type": "application/json",
-                        "ngrok-skip-browser-warning": "true"
-                    },
-                    body: JSON.stringify({ user_id: userId })
+                    headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
+                    body: JSON.stringify({ user_id: userId, bet: bet, target: target })
                 });
 
                 let result = await response.json();
 
-                if (result.success) {
-                    document.getElementById("balance").innerText = result.new_balance;
-                    document.getElementById("upgrade-lvl").innerText = result.upgrade_level;
-                    document.getElementById("upgrade-cost").innerText = result.upgrade_cost;
-                    document.getElementById("upgrade-bonus-text").innerText = `Текущий бонус: +${result.upgrade_bonus} 💎 к дропу`;
+                if (!result.success) {
                     notify(result.message);
-                } else {
-                    notify(result.message);
+                    isSpinning = false;
+                    document.getElementById('upgrade-btn').innerText = "🚀 ПРОКАЧАТЬ";
+                    return;
                 }
+
+                // Анимация вращения стрелки
+                let rollDegree = (result.roll / 100) * 360; // Переводим выпавший процент в градусы
+                let totalRotations = 360 * 5 + rollDegree; // 5 полных оборотов + итоговый угол
+
+                let arrow = document.getElementById('wheel-arrow');
+                arrow.style.transform = `rotate(${totalRotations}deg)`;
+
+                setTimeout(() => {
+                    document.getElementById("balance").innerText = result.new_balance;
+                    notify(result.message);
+
+                    // Сброс стрелки
+                    arrow.style.transition = 'none';
+                    arrow.style.transform = `rotate(${rollDegree}deg)`;
+                    setTimeout(() => {
+                        arrow.style.transition = 'transform 3s cubic-bezier(0.15, 0.9, 0.2, 1)';
+                    }, 50);
+
+                    isSpinning = false;
+                    document.getElementById('upgrade-btn').innerText = "🚀 ПРОКАЧАТЬ";
+                }, 3200);
+
             } catch (e) {
-                notify("Ошибка покупки прокачки!");
+                notify("Ошибка подключения!");
+                isSpinning = false;
+                document.getElementById('upgrade-btn').innerText = "🚀 ПРОКАЧАТЬ";
             }
         }
 
+        updateCalculations();
         loadUserData();
     </script>
 </body>
