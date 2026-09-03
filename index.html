@@ -83,7 +83,6 @@
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        // Актуальный адрес ngrok-туннеля
         const SERVER_URL = "https://swan-prissy-poking.ngrok-free.dev"; 
 
         function notify(text) {
@@ -94,7 +93,6 @@
             }
         }
 
-        // Автоматическая загрузка профиля при открытии Mini App
         async function loadUserData() {
             let userId = tg.initDataUnsafe?.user?.id;
             if (!userId) return;
@@ -108,9 +106,11 @@
                     if (result.streak_days > 0) {
                         document.getElementById("streak-text").innerText = `Стрик: ${result.streak_days} дн.`;
                     }
+                } else {
+                    notify("Ошибка базы: " + result.message);
                 }
             } catch (e) {
-                console.error("Ошибка загрузки профиля:", e);
+                notify("Не удалось загрузить баланс с сервера!");
             }
         }
 
@@ -143,7 +143,6 @@
             }
         }
 
-        // Запуск первичной загрузки баланса
         loadUserData();
     </script>
 </body>
