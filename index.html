@@ -9,7 +9,6 @@
         const SERVER_URL = "https://swan-prissy-poking.ngrok-free.dev";
         const tg = window.Telegram?.WebApp;
         
-        // Безопасная инициализация Telegram
         tg?.expand?.();
         tg?.ready?.();
     </script>
@@ -19,6 +18,7 @@
             --card-bg: #1b2838;
             --accent-blue: #66c0f4;
             --accent-yellow: #ffc107;
+            --accent-green: #28a745;
             --text-color: #f3f3f3;
             --text-muted: #8f98a0;
         }
@@ -64,7 +64,6 @@
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        /* Стиль для CSGO Upgrade Колеса */
         .wheel-container {
             position: relative;
             width: 180px;
@@ -109,7 +108,6 @@
             box-shadow: 0 0 8px var(--accent-yellow);
         }
 
-        /* Инпуты апгрейдера */
         .upgrader-inputs {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -170,7 +168,19 @@
             box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
         }
 
-        /* Навигация */
+        .btn-share {
+            background: linear-gradient(135deg, #66c0f4, #1b2838);
+            color: #fff;
+            border: 1px solid var(--accent-blue);
+            padding: 12px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+
         .nav-bar {
             position: fixed;
             bottom: 0; left: 0; right: 0;
@@ -208,11 +218,10 @@
         </div>
     </div>
 
-    <!-- Вкладка 2: CSGO Upgrader -->
+    <!-- Вкладка 2: Апгрейдер -->
     <div id="tab-upgrade" class="tab-content">
         <div class="section-title">⚡ Апгрейдер Баланса</div>
         <div class="card">
-            
             <div class="wheel-container">
                 <div class="wheel-ring" id="wheel-ring"></div>
                 <div class="wheel-arrow" id="wheel-arrow"></div>
@@ -245,6 +254,26 @@
         </div>
     </div>
 
+    <!-- Вкладка 3: Рефералы -->
+    <div id="tab-refs" class="tab-content">
+        <div class="section-title">👥 Реферальная система</div>
+        <div class="card">
+            <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">
+                Получай <b style="color: var(--accent-yellow);">+200 💎</b> за каждого друга, когда он наберет <b style="color: var(--accent-blue);">500 баллов</b>!
+            </div>
+            <div style="margin: 16px 0; background: #101823; padding: 12px; border-radius: 8px;">
+                <div style="font-size: 11px; color: var(--text-muted);">Приглашено друзей:</div>
+                <div id="ref-count-display" style="font-size: 26px; font-weight: bold; color: var(--accent-blue);">0</div>
+            </div>
+            <div class="input-box" style="margin-bottom: 10px;">
+                <label>Ваша ссылка:</label>
+                <input type="text" id="ref-link-input" readonly value="Загрузка...">
+            </div>
+            <button class="btn-upgrade" onclick="copyRefLink()">📋 КОПИРОВАТЬ ССЫЛКУ</button>
+            <button class="btn-share" onclick="shareRefLink()">✉️ ОТПРАВИТЬ ДРУГУ</button>
+        </div>
+    </div>
+
     <!-- Навигация -->
     <div class="nav-bar">
         <div class="nav-item active" onclick="switchTab('main', this)">
@@ -255,11 +284,16 @@
             <div class="nav-icon">⚡</div>
             Апгрейдер
         </div>
+        <div class="nav-item" onclick="switchTab('refs', this)">
+            <div class="nav-icon">👥</div>
+            Друзья
+        </div>
     </div>
 
     <script>
         let currentMultiplier = 2.0;
         let isSpinning = false;
+        let userRefLink = "";
 
         function notify(text) {
             if (tg && tg.showAlert) tg.showAlert(text);
@@ -290,7 +324,6 @@
             let bet = parseInt(betInput.value) || 0;
             let target = parseInt(targetInput.value) || 0;
 
-            // Ограничение: цель не может превышать x90 (соответствует шансу 1%)
             let maxTarget = bet * 90;
             if (target > maxTarget && maxTarget > 0) {
                 target = maxTarget;
@@ -303,7 +336,6 @@
 
                 document.getElementById('chance-display').innerText = chance.toFixed(1) + '%';
                 
-                // Обновляем визуал круга
                 document.getElementById('wheel-ring').style.background = 
                     `conic-gradient(var(--accent-blue) 0% ${chance}%, #2a3f5a ${chance}% 100%)`;
             } else {
@@ -331,11 +363,33 @@
                     document.getElementById("streak-text").innerText = result.streak_days > 0 
                         ? `Стрик: ${result.streak_days} дн.` 
                         : "Забрать бонус";
-                } else {
-                    console.error("Ошибка от сервера:", result);
+                    
+                    document.getElementById("ref-count-display").innerText = result.ref_count || 0;
+                    
+                    if (result.bot_username) {
+                        userRefLink = `https://t.me/${result.bot_username}?start=${userId}`;
+                        document.getElementById("ref-link-input").value = userRefLink;
+                    }
                 }
             } catch (e) {
                 console.error("Ошибка сети при получении данных пользователя:", e);
+            }
+        }
+
+        function copyRefLink() {
+            if (!userRefLink) return notify("Ссылка еще не загрузилась!");
+            navigator.clipboard.writeText(userRefLink);
+            notify("Реферальная ссылка скопирована!");
+        }
+
+        function shareRefLink() {
+            if (!userRefLink) return notify("Ссылка еще не загрузилась!");
+            let text = encodeURIComponent("Заходи в SteamDrop! Моя реферальная ссылка:");
+            let shareUrl = `https://t.me/share/url?url=${encodeURIComponent(userRefLink)}&text=${text}`;
+            if (tg && tg.openTelegramLink) {
+                tg.openTelegramLink(shareUrl);
+            } else {
+                window.open(shareUrl, '_blank');
             }
         }
 
@@ -391,7 +445,6 @@
                     return;
                 }
 
-                // Анимация вращения стрелки
                 let rollDegree = (result.roll / 100) * 360;
                 let totalRotations = 360 * 5 + rollDegree;
 
@@ -402,7 +455,6 @@
                     document.getElementById("balance").innerText = result.new_balance;
                     notify(result.message);
 
-                    // Сброс стрелки
                     arrow.style.transition = 'none';
                     arrow.style.transform = `rotate(${rollDegree}deg)`;
                     setTimeout(() => {
