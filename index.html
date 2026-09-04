@@ -294,6 +294,19 @@
         </div>
     </div>
 
+    <!-- Вкладка 4: Вывод Наград -->
+    <div id="tab-withdraw" class="tab-content">
+        <div class="section-title" id="t-withdraw-title">🎁 Забрать Награду</div>
+        <div class="card">
+            <div style="font-size: 40px; margin-bottom: 6px;">💳</div>
+            <div style="font-size: 18px; font-weight: bold; color: var(--accent-yellow);">Steam Gift Card $5</div>
+            <div style="font-size: 13px; color: var(--text-muted); margin: 8px 0 16px;" id="t-withdraw-desc">
+                Накопите <b style="color: var(--accent-blue);">5000 💎</b>, чтобы обменять их на подарочную карту Steam!
+            </div>
+            <button class="btn-upgrade" id="btn-withdraw" onclick="withdrawReward()">🎁 ЗАБРАТЬ (5000 💎)</button>
+        </div>
+    </div>
+
     <!-- Навигация -->
     <div class="nav-bar">
         <div class="nav-item active" onclick="switchTab('main', this)">
@@ -307,6 +320,10 @@
         <div class="nav-item" onclick="switchTab('refs', this)">
             <div class="nav-icon">👥</div>
             <span id="t-nav-refs">Друзья</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('withdraw', this)">
+            <div class="nav-icon">🎁</div>
+            <span id="t-nav-withdraw">Вывод</span>
         </div>
     </div>
 
@@ -328,9 +345,13 @@
                 yourLink: "Ваша ссылка:",
                 copyRef: "📋 КОПИРОВАТЬ ССЫЛКУ",
                 shareRef: "✉️ ОТПРАВИТЬ ДРУГУ",
+                withdrawTitle: "🎁 Забрать Награду",
+                withdrawDesc: "Накопите <b style='color: var(--accent-blue);'>5000 💎</b>, чтобы обменять их на подарочную карту Steam!",
+                withdrawBtn: "🎁 ЗАБРАТЬ (5000 💎)",
                 navMain: "Главная",
                 navUpgrade: "Апгрейдер",
                 navRefs: "Друзья",
+                navWithdraw: "Вывод",
                 streakPrefix: "Стрик:",
                 daysShort: "дн.",
                 copySuccess: "Реферальная ссылка скопирована!",
@@ -352,9 +373,13 @@
                 yourLink: "Your Link:",
                 copyRef: "📋 COPY LINK",
                 shareRef: "✉️ SHARE WITH FRIEND",
+                withdrawTitle: "🎁 Claim Reward",
+                withdrawDesc: "Collect <b style='color: var(--accent-blue);'>5000 💎</b> to redeem a Steam Gift Card!",
+                withdrawBtn: "🎁 CLAIM (5000 💎)",
                 navMain: "Home",
                 navUpgrade: "Upgrader",
                 navRefs: "Friends",
+                navWithdraw: "Withdraw",
                 streakPrefix: "Streak:",
                 daysShort: "days",
                 copySuccess: "Referral link copied!",
@@ -385,9 +410,13 @@
             document.getElementById('t-your-link').innerText = t.yourLink;
             document.getElementById('btn-copy-ref').innerText = t.copyRef;
             document.getElementById('btn-share-ref').innerText = t.shareRef;
+            document.getElementById('t-withdraw-title').innerText = t.withdrawTitle;
+            document.getElementById('t-withdraw-desc').innerHTML = t.withdrawDesc;
+            document.getElementById('btn-withdraw').innerText = t.withdrawBtn;
             document.getElementById('t-nav-main').innerText = t.navMain;
             document.getElementById('t-nav-upgrade').innerText = t.navUpgrade;
             document.getElementById('t-nav-refs').innerText = t.navRefs;
+            document.getElementById('t-nav-withdraw').innerText = t.navWithdraw;
 
             if (userStreakDays > 0) {
                 document.getElementById("streak-text").innerText = `${t.streakPrefix} ${userStreakDays} ${t.daysShort}`;
@@ -576,6 +605,26 @@
                 notify("Server connection error!");
                 isSpinning = false;
                 document.getElementById('upgrade-btn').innerText = i18n[currentLang].upgradeBtn;
+            }
+        }
+
+        async function withdrawReward() {
+            let userId = tg?.initDataUnsafe?.user?.id || 123456789;
+
+            try {
+                let response = await fetch(`${SERVER_URL}/api/withdraw`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
+                    body: JSON.stringify({ user_id: userId, item: "Steam Gift Card $5" })
+                });
+
+                let result = await response.json();
+                if (result.success) {
+                    document.getElementById("balance").innerText = result.new_balance;
+                }
+                notify(result.message);
+            } catch (e) {
+                notify("Server connection error!");
             }
         }
 
