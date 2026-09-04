@@ -39,8 +39,25 @@
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
             margin-bottom: 16px;
             border: 1px solid rgba(102, 192, 244, 0.2);
+            position: relative;
+        }
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
         }
         .title { font-size: 20px; font-weight: bold; color: var(--accent-blue); }
+        .lang-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--accent-blue);
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+        }
         .subtitle { font-size: 12px; color: var(--text-muted); }
         .balance-box {
             font-size: 32px;
@@ -62,7 +79,6 @@
             padding: 16px;
             text-align: center;
             border: 1px solid rgba(255, 255, 255, 0.05);
-            margin-bottom: 12px;
         }
 
         .wheel-container {
@@ -169,19 +185,6 @@
             box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
         }
 
-        .btn-buy {
-            background: linear-gradient(135deg, #28a745, #1e7e34);
-            color: #fff;
-            border: none;
-            padding: 12px;
-            font-size: 14px;
-            font-weight: 800;
-            border-radius: 10px;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 10px;
-        }
-
         .btn-share {
             background: linear-gradient(135deg, #66c0f4, #1b2838);
             color: #fff;
@@ -217,30 +220,33 @@
 </head>
 <body>
     <div class="header">
-        <div class="title">🎮 SteamDrop</div>
-        <div class="subtitle">Твой баланс:</div>
+        <div class="header-top">
+            <div class="title">🎮 SteamDrop</div>
+            <button class="lang-btn" id="lang-toggle-btn" onclick="toggleLanguage()">🌐 EN</button>
+        </div>
+        <div class="subtitle" id="t-your-balance">Твой баланс:</div>
         <div class="balance-box"><span id="balance">...</span> 💎</div>
     </div>
 
     <!-- Вкладка 1: Главная -->
     <div id="tab-main" class="tab-content active">
-        <div class="section-title">⚡ Ежедневный Бонус</div>
+        <div class="section-title" id="t-daily-title">⚡ Ежедневный Бонус</div>
         <div class="card" onclick="claimDailyDrop()" style="cursor: pointer;">
             <div style="font-size: 40px; margin-bottom: 6px;">🔥</div>
-            <div style="font-size: 16px; font-weight: bold;">Забрать Дроп</div>
+            <div style="font-size: 16px; font-weight: bold;" id="t-claim-drop">Забрать Дроп</div>
             <div class="subtitle" id="streak-text" style="margin-top: 4px;">Загрузка...</div>
         </div>
     </div>
 
     <!-- Вкладка 2: Апгрейдер -->
     <div id="tab-upgrade" class="tab-content">
-        <div class="section-title">⚡ Апгрейдер Баланса</div>
+        <div class="section-title" id="t-upgrade-title">⚡ Апгрейдер Баланса</div>
         <div class="card">
             <div class="wheel-container">
                 <div class="wheel-ring" id="wheel-ring"></div>
                 <div class="wheel-arrow" id="wheel-arrow"></div>
                 <div class="wheel-inner">
-                    <span style="font-size: 11px; color: var(--text-muted);">Шанс</span>
+                    <span style="font-size: 11px; color: var(--text-muted);" id="t-chance-label">Шанс</span>
                     <span id="chance-display" style="font-size: 22px; font-weight: 800; color: var(--accent-yellow);">45%</span>
                 </div>
             </div>
@@ -254,11 +260,11 @@
 
             <div class="upgrader-inputs">
                 <div class="input-box">
-                    <label>Ставка (💎, мин. 100)</label>
-                    <input type="number" id="bet-input" value="100" min="100" oninput="updateCalculations()">
+                    <label id="t-bet-label">Ставка (💎)</label>
+                    <input type="number" id="bet-input" value="100" oninput="updateCalculations()">
                 </div>
                 <div class="input-box">
-                    <label>Выиграешь (💎)</label>
+                    <label id="t-win-label">Выиграешь (💎)</label>
                     <input type="number" id="target-input" value="200" oninput="updateCalculationsFromTarget()">
                 </div>
             </div>
@@ -268,39 +274,23 @@
         </div>
     </div>
 
-    <!-- Вкладка 3: Магазин / Вывод -->
-    <div id="tab-shop" class="tab-content">
-        <div class="section-title">🎁 Вывод Наград</div>
-        <div class="card">
-            <div style="font-size: 40px; margin-bottom: 6px;">💳</div>
-            <div style="font-size: 18px; font-weight: bold; color: var(--accent-blue);">Steam Gift Card $5</div>
-            <div style="font-size: 13px; color: var(--text-muted); margin: 8px 0;">
-                Пополнение баланса Steam на $5 (USD).
-            </div>
-            <div style="font-size: 20px; font-weight: 800; color: var(--accent-yellow); margin-bottom: 12px;">
-                5000 💎
-            </div>
-            <button class="btn-buy" onclick="buySteamCard()">🛒 ЗАБРАТЬ КАРТУ</button>
-        </div>
-    </div>
-
-    <!-- Вкладка 4: Рефералы -->
+    <!-- Вкладка 3: Рефералы -->
     <div id="tab-refs" class="tab-content">
-        <div class="section-title">👥 Реферальная система</div>
+        <div class="section-title" id="t-refs-title">👥 Реферальная система</div>
         <div class="card">
-            <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">
+            <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;" id="t-ref-desc">
                 Получай <b style="color: var(--accent-yellow);">+200 💎</b> за каждого друга, когда он наберет <b style="color: var(--accent-blue);">500 баллов</b>!
             </div>
             <div style="margin: 16px 0; background: #101823; padding: 12px; border-radius: 8px;">
-                <div style="font-size: 11px; color: var(--text-muted);">Приглашено друзей:</div>
+                <div style="font-size: 11px; color: var(--text-muted);" id="t-friends-count">Приглашено друзей:</div>
                 <div id="ref-count-display" style="font-size: 26px; font-weight: bold; color: var(--accent-blue);">0</div>
             </div>
             <div class="input-box" style="margin-bottom: 10px;">
-                <label>Ваша ссылка:</label>
+                <label id="t-your-link">Ваша ссылка:</label>
                 <input type="text" id="ref-link-input" readonly value="Загрузка...">
             </div>
-            <button class="btn-upgrade" onclick="copyRefLink()">📋 КОПИРОВАТЬ ССЫЛКУ</button>
-            <button class="btn-share" onclick="shareRefLink()">✉️ ОТПРАВИТЬ ДРУГУ</button>
+            <button class="btn-upgrade" id="btn-copy-ref" onclick="copyRefLink()">📋 КОПИРОВАТЬ ССЫЛКУ</button>
+            <button class="btn-share" id="btn-share-ref" onclick="shareRefLink()">✉️ ОТПРАВИТЬ ДРУГУ</button>
         </div>
     </div>
 
@@ -308,26 +298,109 @@
     <div class="nav-bar">
         <div class="nav-item active" onclick="switchTab('main', this)">
             <div class="nav-icon">🏠</div>
-            Главная
+            <span id="t-nav-main">Главная</span>
         </div>
         <div class="nav-item" onclick="switchTab('upgrade', this)">
             <div class="nav-icon">⚡</div>
-            Апгрейдер
-        </div>
-        <div class="nav-item" onclick="switchTab('shop', this)">
-            <div class="nav-icon">🎁</div>
-            Магазин
+            <span id="t-nav-upgrade">Апгрейдер</span>
         </div>
         <div class="nav-item" onclick="switchTab('refs', this)">
             <div class="nav-icon">👥</div>
-            Друзья
+            <span id="t-nav-refs">Друзья</span>
         </div>
     </div>
 
     <script>
+        const i18n = {
+            ru: {
+                yourBalance: "Твой баланс:",
+                dailyTitle: "⚡ Ежедневный Бонус",
+                claimDrop: "Забрать Дроп",
+                upgradeTitle: "⚡ Апгрейдер Баланса",
+                chanceLabel: "Шанс",
+                betLabel: "Ставка (💎)",
+                winLabel: "Выиграешь (💎)",
+                upgradeBtn: "🚀 ПРОКАЧАТЬ",
+                upgradeSpinning: "ВРАЩЕНИЕ...",
+                refsTitle: "👥 Реферальная система",
+                refDesc: "Получай <b style='color: var(--accent-yellow);'>+200 💎</b> за каждого друга, когда он наберет <b style='color: var(--accent-blue);'>500 баллов</b>!",
+                friendsCount: "Приглашено друзей:",
+                yourLink: "Ваша ссылка:",
+                copyRef: "📋 КОПИРОВАТЬ ССЫЛКУ",
+                shareRef: "✉️ ОТПРАВИТЬ ДРУГУ",
+                navMain: "Главная",
+                navUpgrade: "Апгрейдер",
+                navRefs: "Друзья",
+                streakPrefix: "Стрик:",
+                daysShort: "дн.",
+                copySuccess: "Реферальная ссылка скопирована!",
+                loading: "Загрузка..."
+            },
+            en: {
+                yourBalance: "Your Balance:",
+                dailyTitle: "⚡ Daily Bonus",
+                claimDrop: "Claim Drop",
+                upgradeTitle: "⚡ Balance Upgrader",
+                chanceLabel: "Chance",
+                betLabel: "Bet (💎)",
+                winLabel: "You Win (💎)",
+                upgradeBtn: "🚀 UPGRADE",
+                upgradeSpinning: "SPINNING...",
+                refsTitle: "👥 Referral System",
+                refDesc: "Get <b style='color: var(--accent-yellow);'>+200 💎</b> for each friend who reaches <b style='color: var(--accent-blue);'>500 points</b>!",
+                friendsCount: "Invited Friends:",
+                yourLink: "Your Link:",
+                copyRef: "📋 COPY LINK",
+                shareRef: "✉️ SHARE WITH FRIEND",
+                navMain: "Home",
+                navUpgrade: "Upgrader",
+                navRefs: "Friends",
+                streakPrefix: "Streak:",
+                daysShort: "days",
+                copySuccess: "Referral link copied!",
+                loading: "Loading..."
+            }
+        };
+
+        let currentLang = localStorage.getItem('app_lang') || 'ru';
         let currentMultiplier = 2.0;
         let isSpinning = false;
         let userRefLink = "";
+        let userStreakDays = 0;
+
+        function applyLanguage() {
+            const t = i18n[currentLang];
+            document.getElementById('lang-toggle-btn').innerText = currentLang === 'ru' ? '🌐 EN' : '🌐 RU';
+            document.getElementById('t-your-balance').innerText = t.yourBalance;
+            document.getElementById('t-daily-title').innerText = t.dailyTitle;
+            document.getElementById('t-claim-drop').innerText = t.claimDrop;
+            document.getElementById('t-upgrade-title').innerText = t.upgradeTitle;
+            document.getElementById('t-chance-label').innerText = t.chanceLabel;
+            document.getElementById('t-bet-label').innerText = t.betLabel;
+            document.getElementById('t-win-label').innerText = t.winLabel;
+            if (!isSpinning) document.getElementById('upgrade-btn').innerText = t.upgradeBtn;
+            document.getElementById('t-refs-title').innerText = t.refsTitle;
+            document.getElementById('t-ref-desc').innerHTML = t.refDesc;
+            document.getElementById('t-friends-count').innerText = t.friendsCount;
+            document.getElementById('t-your-link').innerText = t.yourLink;
+            document.getElementById('btn-copy-ref').innerText = t.copyRef;
+            document.getElementById('btn-share-ref').innerText = t.shareRef;
+            document.getElementById('t-nav-main').innerText = t.navMain;
+            document.getElementById('t-nav-upgrade').innerText = t.navUpgrade;
+            document.getElementById('t-nav-refs').innerText = t.navRefs;
+
+            if (userStreakDays > 0) {
+                document.getElementById("streak-text").innerText = `${t.streakPrefix} ${userStreakDays} ${t.daysShort}`;
+            } else {
+                document.getElementById("streak-text").innerText = t.claimDrop;
+            }
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'ru' ? 'en' : 'ru';
+            localStorage.setItem('app_lang', currentLang);
+            applyLanguage();
+        }
 
         function notify(text) {
             if (tg && tg.showAlert) tg.showAlert(text);
@@ -364,7 +437,7 @@
                 targetInput.value = target;
             }
 
-            if (bet >= 100 && target > bet) {
+            if (bet > 0 && target > bet) {
                 let chance = (bet / target) * 90.0;
                 chance = Math.min(90.0, Math.max(1.0, chance));
 
@@ -394,9 +467,8 @@
 
                 if (result.success) {
                     document.getElementById("balance").innerText = result.balance;
-                    document.getElementById("streak-text").innerText = result.streak_days > 0 
-                        ? `Стрик: ${result.streak_days} дн.` 
-                        : "Забрать бонус";
+                    userStreakDays = result.streak_days || 0;
+                    applyLanguage();
                     
                     document.getElementById("ref-count-display").innerText = result.ref_count || 0;
                     
@@ -406,19 +478,19 @@
                     }
                 }
             } catch (e) {
-                console.error("Ошибка сети при получении данных пользователя:", e);
+                console.error("Network error:", e);
             }
         }
 
         function copyRefLink() {
-            if (!userRefLink) return notify("Ссылка еще не загрузилась!");
+            if (!userRefLink) return notify("Link is loading...");
             navigator.clipboard.writeText(userRefLink);
-            notify("Реферальная ссылка скопирована!");
+            notify(i18n[currentLang].copySuccess);
         }
 
         function shareRefLink() {
-            if (!userRefLink) return notify("Ссылка еще не загрузилась!");
-            let text = encodeURIComponent("Заходи в SteamDrop! Моя реферальная ссылка:");
+            if (!userRefLink) return notify("Link is loading...");
+            let text = encodeURIComponent(currentLang === 'ru' ? "Заходи в SteamDrop! Моя ссылка:" : "Join SteamDrop! My link:");
             let shareUrl = `https://t.me/share/url?url=${encodeURIComponent(userRefLink)}&text=${text}`;
             if (tg && tg.openTelegramLink) {
                 tg.openTelegramLink(shareUrl);
@@ -440,11 +512,12 @@
                 let result = await response.json();
                 if (result.success) {
                     document.getElementById("balance").innerText = result.new_balance;
-                    document.getElementById("streak-text").innerText = `Стрик: ${result.streak} дн.`;
+                    userStreakDays = result.streak;
+                    applyLanguage();
                 }
                 notify(result.message);
             } catch (e) {
-                notify("Ошибка подключения к серверу!");
+                notify("Server connection error!");
             }
         }
 
@@ -456,16 +529,12 @@
             let bet = parseInt(document.getElementById('bet-input').value) || 0;
             let target = parseInt(document.getElementById('target-input').value) || 0;
 
-            if (bet < 100) {
-                return notify("Минимальная ставка — 100 💎!");
-            }
-
-            if (target <= bet) {
-                return notify("Цель должна быть больше ставки!");
+            if (bet <= 0 || target <= bet) {
+                return notify("Enter valid bet and target!");
             }
 
             isSpinning = true;
-            document.getElementById('upgrade-btn').innerText = "ВРАЩЕНИЕ...";
+            document.getElementById('upgrade-btn').innerText = i18n[currentLang].upgradeSpinning;
 
             try {
                 let response = await fetch(`${SERVER_URL}/api/upgrade`, {
@@ -479,7 +548,7 @@
                 if (!result.success) {
                     notify(result.message);
                     isSpinning = false;
-                    document.getElementById('upgrade-btn').innerText = "🚀 ПРОКАЧАТЬ";
+                    document.getElementById('upgrade-btn').innerText = i18n[currentLang].upgradeBtn;
                     return;
                 }
 
@@ -500,36 +569,17 @@
                     }, 50);
 
                     isSpinning = false;
-                    document.getElementById('upgrade-btn').innerText = "🚀 ПРОКАЧАТЬ";
+                    document.getElementById('upgrade-btn').innerText = i18n[currentLang].upgradeBtn;
                 }, 3200);
 
             } catch (e) {
-                notify("Ошибка подключения!");
+                notify("Server connection error!");
                 isSpinning = false;
-                document.getElementById('upgrade-btn').innerText = "🚀 ПРОКАЧАТЬ";
+                document.getElementById('upgrade-btn').innerText = i18n[currentLang].upgradeBtn;
             }
         }
 
-        async function buySteamCard() {
-            let userId = tg?.initDataUnsafe?.user?.id || 123456789;
-
-            try {
-                let response = await fetch(`${SERVER_URL}/api/withdraw`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
-                    body: JSON.stringify({ user_id: userId, item: "Steam Gift Card $5" })
-                });
-
-                let result = await response.json();
-                if (result.success) {
-                    document.getElementById("balance").innerText = result.new_balance;
-                }
-                notify(result.message);
-            } catch (e) {
-                notify("Ошибка подключения к серверу!");
-            }
-        }
-
+        applyLanguage();
         updateCalculations();
         loadUserData();
     </script>
