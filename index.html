@@ -254,8 +254,8 @@
 
             <div class="upgrader-inputs">
                 <div class="input-box">
-                    <label>Ставка (💎)</label>
-                    <input type="number" id="bet-input" value="100" oninput="updateCalculations()">
+                    <label>Ставка (💎, мин. 100)</label>
+                    <input type="number" id="bet-input" value="100" min="100" oninput="updateCalculations()">
                 </div>
                 <div class="input-box">
                     <label>Выиграешь (💎)</label>
@@ -364,7 +364,7 @@
                 targetInput.value = target;
             }
 
-            if (bet > 0 && target > bet) {
+            if (bet >= 100 && target > bet) {
                 let chance = (bet / target) * 90.0;
                 chance = Math.min(90.0, Math.max(1.0, chance));
 
@@ -456,8 +456,12 @@
             let bet = parseInt(document.getElementById('bet-input').value) || 0;
             let target = parseInt(document.getElementById('target-input').value) || 0;
 
-            if (bet <= 0 || target <= bet) {
-                return notify("Укажите правильную ставку и цель!");
+            if (bet < 100) {
+                return notify("Минимальная ставка — 100 💎!");
+            }
+
+            if (target <= bet) {
+                return notify("Цель должна быть больше ставки!");
             }
 
             isSpinning = true;
@@ -506,7 +510,6 @@
             }
         }
 
-        // --- ФУНКЦИЯ ПОКУПКИ ГИФТ-КАРТЫ ---
         async function buySteamCard() {
             let userId = tg?.initDataUnsafe?.user?.id || 123456789;
 
