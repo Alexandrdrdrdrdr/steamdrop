@@ -214,9 +214,19 @@
             cursor: pointer;
             flex: 1;
         }
-        .nav-item.active { color: var(--accent-blue); font-weight: bold; }
+       .nav-item.active { color: var(--accent-blue); font-weight: bold; }
         .nav-icon { font-size: 18px; margin-bottom: 2px; }
-    </style>
+
+        /* ВСТАВЛЯТЬ СЮДА */
+        .tab-content {
+            display: none;
+            min-height: calc(100vh - 180px);
+            flex-direction: column;
+            justify-content: center;
+        }
+        .tab-content.active {
+            display: flex;
+        }
 </head>
 <body>
     <div class="header">
