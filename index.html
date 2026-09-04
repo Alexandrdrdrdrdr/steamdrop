@@ -68,9 +68,6 @@
         }
         .balance-box span { color: var(--accent-blue); }
 
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-
         .section-title { font-size: 16px; font-weight: 700; margin: 16px 0 10px; text-align: center; }
         
         .card {
@@ -214,10 +211,9 @@
             cursor: pointer;
             flex: 1;
         }
-       .nav-item.active { color: var(--accent-blue); font-weight: bold; }
+        .nav-item.active { color: var(--accent-blue); font-weight: bold; }
         .nav-icon { font-size: 18px; margin-bottom: 2px; }
 
-        /* ВСТАВЛЯТЬ СЮДА */
         .tab-content {
             display: none;
             min-height: calc(100vh - 180px);
@@ -227,6 +223,7 @@
         .tab-content.active {
             display: flex;
         }
+    </style>
 </head>
 <body>
     <div class="header">
