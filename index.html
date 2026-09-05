@@ -20,11 +20,10 @@
         }
 
         :root {
-            /* Новая неоновая палитра под аватарку */
-            --bg-color: #030303; /* Глубокий чёрный */
-            --card-bg: #0a0a0a;  /* Почти чёрный для карточек */
-            --accent-neon: #39ff14; /* Токсично-зелёный (как на аве) */
-            --accent-dark-green: #0a290a; /* Тёмно-зелёный для неактивных элементов */
+            --bg-color: #030303;
+            --card-bg: #0a0a0a;
+            --accent-neon: #39ff14;
+            --accent-dark-green: #0a290a;
             --text-color: #f3f3f3;
             --text-muted: #666666;
         }
@@ -348,16 +347,16 @@
 <body>
     <div class="header">
         <button class="lang-btn" id="lang-toggle-btn" onclick="toggleLanguage()">🌐 EN</button>
-        <div class="title">🎮 SteamDrop</div>
+        <div class="title">🪙 SteamDrop</div>
         <div class="subtitle" id="t-your-balance">Твой баланс:</div>
-        <div class="balance-box"><span id="balance">...</span> 💎</div>
+        <div class="balance-box"><span id="balance">...</span> 🪙</div>
     </div>
 
     <!-- Вкладка 1: Главная -->
     <div id="tab-main" class="tab-content active">
         <div class="section-title" id="t-daily-title">⚡ Ежедневный Бонус</div>
         <div class="card" onclick="claimDailyDrop()" style="cursor: pointer; border-color: var(--accent-neon);">
-            <div style="font-size: 48px; margin-bottom: 8px;">🟩</div>
+            <div style="font-size: 48px; margin-bottom: 8px;">🪙</div>
             <div style="font-size: 18px; font-weight: bold; color: var(--accent-neon);" id="t-claim-drop">Забрать Дроп</div>
             <div class="subtitle" id="streak-text" style="margin-top: 6px;">Загрузка...</div>
         </div>
@@ -369,7 +368,7 @@
         <div class="card" style="padding: 16px;">
             <div style="font-size: 32px; margin-bottom: 6px;">📊</div>
             <div style="font-size: 16px; font-weight: bold; margin-bottom: 4px;" id="t-tasks-heading">Платные опросы Bitlabs</div>
-            <div class="subtitle" style="margin-bottom: 12px;" id="t-tasks-desc">Пройди доступные опросы и получи кристаллы прямо на баланс SteamDrop!</div>
+            <div class="subtitle" style="margin-bottom: 12px;" id="t-tasks-desc">Пройди доступные опросы и получи монеты прямо на баланс SteamDrop!</div>
             
             <iframe id="bitlabs-iframe" class="bitlabs-frame" src="about:blank" allow="geolocation"></iframe>
 
@@ -399,11 +398,11 @@
 
             <div class="upgrader-inputs">
                 <div class="input-box">
-                    <label id="t-bet-label">Ставка (💎)</label>
+                    <label id="t-bet-label">Ставка (🪙)</label>
                     <input type="number" id="bet-input" value="100" oninput="updateCalculations()">
                 </div>
                 <div class="input-box">
-                    <label id="t-win-label">Выиграешь (💎)</label>
+                    <label id="t-win-label">Выиграешь (🪙)</label>
                     <input type="number" id="target-input" value="200" oninput="updateCalculationsFromTarget()">
                 </div>
             </div>
@@ -418,7 +417,7 @@
         <div class="section-title" id="t-refs-title">👥 Реферальная система</div>
         <div class="card">
             <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;" id="t-ref-desc">
-                Получай <b style="color: var(--accent-neon);">+200 💎</b> за каждого друга, когда он наберет <b>500 баллов</b>!
+                Получай <b style="color: var(--accent-neon);">+200 🪙</b> за каждого друга, когда он наберет <b>500 монет</b>!
             </div>
             <div style="margin: 16px 0; background: #050505; padding: 12px; border-radius: 8px; border: 1px solid rgba(57,255,20,0.2);">
                 <div style="font-size: 11px; color: var(--text-muted);" id="t-friends-count">Приглашено друзей:</div>
@@ -440,7 +439,7 @@
             <div class="withdraw-item">
                 <div class="withdraw-info">
                     <div class="withdraw-title">💳 Steam Card $5</div>
-                    <div class="withdraw-price">5 000 💎</div>
+                    <div class="withdraw-price">5 000 🪙</div>
                 </div>
                 <button class="btn-withdraw-action" onclick="withdrawReward('Steam Card $5', 5000)">ВЫВЕСТИ</button>
             </div>
@@ -450,7 +449,7 @@
                         💳 Steam Card $10 
                         <span class="badge-discount">-5%</span>
                     </div>
-                    <div class="withdraw-price">9 500 💎</div>
+                    <div class="withdraw-price">9 500 🪙</div>
                 </div>
                 <button class="btn-withdraw-action" onclick="withdrawReward('Steam Card $10', 9500)">ВЫВЕСТИ</button>
             </div>
@@ -460,7 +459,7 @@
                         💳 Steam Card $25 
                         <span class="badge-discount">-8%</span>
                     </div>
-                    <div class="withdraw-price">23 000 💎</div>
+                    <div class="withdraw-price">23 000 🪙</div>
                 </div>
                 <button class="btn-withdraw-action" onclick="withdrawReward('Steam Card $25', 23000)">ВЫВЕСТИ</button>
             </div>
@@ -470,9 +469,19 @@
                         💳 Steam Card $50 
                         <span class="badge-discount">-12%</span>
                     </div>
-                    <div class="withdraw-price">44 000 💎</div>
+                    <div class="withdraw-price">44 000 🪙</div>
                 </div>
                 <button class="btn-withdraw-action" onclick="withdrawReward('Steam Card $50', 44000)">ВЫВЕСТИ</button>
+            </div>
+            <div class="withdraw-item">
+                <div class="withdraw-info">
+                    <div class="withdraw-title">
+                        💳 Steam Card $100 
+                        <span class="badge-discount">-15%</span>
+                    </div>
+                    <div class="withdraw-price">85 000 🪙</div>
+                </div>
+                <button class="btn-withdraw-action" onclick="withdrawReward('Steam Card $100', 85000)">ВЫВЕСТИ</button>
             </div>
         </div>
     </div>
@@ -510,16 +519,16 @@
                 navTasks: "Задания",
                 tasksTitle: "📋 Заработок на опросах",
                 tasksHeading: "Платные опросы Bitlabs",
-                tasksDesc: "Пройди доступные опросы и получи кристаллы прямо на баланс SteamDrop!",
+                tasksDesc: "Пройди доступные опросы и получи монеты прямо на баланс SteamDrop!",
                 tasksBtn: "🌐 ОТКРЫТЬ ВО ВНЕШНЕМ БРАУЗЕРЕ",
                 upgradeTitle: "⚡ Апгрейдер Баланса",
                 chanceLabel: "Шанс",
-                betLabel: "Ставка (💎)",
-                winLabel: "Выиграешь (💎)",
+                betLabel: "Ставка (🪙)",
+                winLabel: "Выиграешь (🪙)",
                 upgradeBtn: "🚀 ПРОКАЧАТЬ",
                 upgradeSpinning: "ВРАЩЕНИЕ...",
                 refsTitle: "👥 Реферальная система",
-                refDesc: "Получай <b style='color: var(--accent-neon);'>+200 💎</b> за каждого друга, когда он наберет <b>500 баллов</b>!",
+                refDesc: "Получай <b style='color: var(--accent-neon);'>+200 🪙</b> за каждого друга, когда он наберет <b>500 монет</b>!",
                 friendsCount: "Приглашено друзей:",
                 yourLink: "Ваша ссылка:",
                 copyRef: "📋 КОПИРОВАТЬ ССЫЛКУ",
@@ -542,16 +551,16 @@
                 navTasks: "Tasks",
                 tasksTitle: "📋 Earn by Surveys",
                 tasksHeading: "Bitlabs Paid Surveys",
-                tasksDesc: "Complete available surveys and get crystals directly to your SteamDrop balance!",
+                tasksDesc: "Complete available surveys and get coins directly to your SteamDrop balance!",
                 tasksBtn: "🌐 OPEN IN EXTERNAL BROWSER",
                 upgradeTitle: "⚡ Balance Upgrader",
                 chanceLabel: "Chance",
-                betLabel: "Bet (💎)",
-                winLabel: "You Win (💎)",
+                betLabel: "Bet (🪙)",
+                winLabel: "You Win (🪙)",
                 upgradeBtn: "🚀 UPGRADE",
                 upgradeSpinning: "SPINNING...",
                 refsTitle: "👥 Referral System",
-                refDesc: "Get <b style='color: var(--accent-neon);'>+200 💎</b> for each friend who reaches <b>500 points</b>!",
+                refDesc: "Get <b style='color: var(--accent-neon);'>+200 🪙</b> for each friend who reaches <b>500 coins</b>!",
                 friendsCount: "Invited Friends:",
                 yourLink: "Your Link:",
                 copyRef: "📋 COPY LINK",
@@ -706,7 +715,6 @@
                 chance = Math.min(90.0, Math.max(1.0, chance));
 
                 document.getElementById('chance-display').innerText = chance.toFixed(1) + '%';
-                /* Обновлено под новый неоновый цвет */
                 document.getElementById('wheel-ring').style.background = 
                     `conic-gradient(var(--accent-neon) 0% ${chance}%, var(--accent-dark-green) ${chance}% 100%)`;
             } else {
@@ -861,7 +869,7 @@
         async function withdrawReward(item, price) {
             let userId = getUserId();
             
-            if (!confirm(currentLang === 'ru' ? `Подтвердить вывод ${item} за ${price} 💎?` : `Confirm withdrawal of ${item} for ${price} 💎?`)) {
+            if (!confirm(currentLang === 'ru' ? `Подтвердить вывод ${item} за ${price} 🪙?` : `Confirm withdrawal of ${item} for ${price} 🪙?`)) {
                 return;
             }
 
