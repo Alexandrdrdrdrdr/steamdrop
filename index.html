@@ -348,7 +348,22 @@
         </div>
     </div>
 
-    <!-- Вкладка 2: Апгрейдер -->
+    <!-- Вкладка 2: Задания (CPX Research) - НОВАЯ -->
+    <div id="tab-tasks" class="tab-content">
+        <div class="section-title" id="t-tasks-title">📋 Задания и Опросы</div>
+        <div class="card">
+            <div style="font-size: 48px; margin-bottom: 12px;">📊</div>
+            <div style="font-size: 14px; color: var(--text-color); margin-bottom: 8px;" id="t-tasks-desc">
+                Проходи опросы от CPX Research и получай сотни 💎 прямо на баланс!
+            </div>
+            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;" id="t-tasks-subdesc">
+                Награды начисляются автоматически после успешного завершения.
+            </div>
+            <button class="btn-upgrade" id="btn-open-tasks" onclick="openCPXTasks()">🚀 ПЕРЕЙТИ К ОПРОСАМ</button>
+        </div>
+    </div>
+
+    <!-- Вкладка 3: Апгрейдер -->
     <div id="tab-upgrade" class="tab-content">
         <div class="section-title" id="t-upgrade-title">⚡ Апгрейдер Баланса</div>
         <div class="card">
@@ -384,7 +399,7 @@
         </div>
     </div>
 
-    <!-- Вкладка 3: Рефералы -->
+    <!-- Вкладка 4: Рефералы -->
     <div id="tab-refs" class="tab-content">
         <div class="section-title" id="t-refs-title">👥 Реферальная система</div>
         <div class="card">
@@ -404,11 +419,10 @@
         </div>
     </div>
 
-    <!-- Вкладка 4: Вывод Наград -->
+    <!-- Вкладка 5: Вывод Наград -->
     <div id="tab-withdraw" class="tab-content">
         <div class="section-title" id="t-withdraw-title">🎁 Забрать Награду</div>
         <div class="withdraw-list">
-
             <!-- Карта $5 -->
             <div class="withdraw-item">
                 <div class="withdraw-info">
@@ -417,7 +431,6 @@
                 </div>
                 <button class="btn-withdraw-action" onclick="withdrawReward('Steam Card $5', 5000)">ВЫВЕСТИ</button>
             </div>
-
             <!-- Карта $10 -->
             <div class="withdraw-item">
                 <div class="withdraw-info">
@@ -429,7 +442,6 @@
                 </div>
                 <button class="btn-withdraw-action" onclick="withdrawReward('Steam Card $10', 9500)">ВЫВЕСТИ</button>
             </div>
-
             <!-- Карта $25 -->
             <div class="withdraw-item">
                 <div class="withdraw-info">
@@ -441,7 +453,6 @@
                 </div>
                 <button class="btn-withdraw-action" onclick="withdrawReward('Steam Card $25', 23000)">ВЫВЕСТИ</button>
             </div>
-
             <!-- Карта $50 -->
             <div class="withdraw-item">
                 <div class="withdraw-info">
@@ -453,19 +464,6 @@
                 </div>
                 <button class="btn-withdraw-action" onclick="withdrawReward('Steam Card $50', 44000)">ВЫВЕСТИ</button>
             </div>
-
-            <!-- Карта $100 -->
-            <div class="withdraw-item">
-                <div class="withdraw-info">
-                    <div class="withdraw-title">
-                        💳 Steam Card $100 
-                        <span class="badge-discount">-15%</span>
-                    </div>
-                    <div class="withdraw-price">85 000 💎</div>
-                </div>
-                <button class="btn-withdraw-action" onclick="withdrawReward('Steam Card $100', 85000)">ВЫВЕСТИ</button>
-            </div>
-
         </div>
     </div>
 
@@ -474,6 +472,10 @@
         <div class="nav-item active" onclick="switchTab('main', this)">
             <div class="nav-icon">🏠</div>
             <span id="t-nav-main">Главная</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('tasks', this)">
+            <div class="nav-icon">📋</div>
+            <span id="t-nav-tasks">Задания</span>
         </div>
         <div class="nav-item" onclick="switchTab('upgrade', this)">
             <div class="nav-icon">⚡</div>
@@ -495,6 +497,14 @@
                 yourBalance: "Твой баланс:",
                 dailyTitle: "⚡ Ежедневный Бонус",
                 claimDrop: "Забрать Дроп",
+                
+                // Переводы для новой вкладки заданий
+                navTasks: "Задания",
+                tasksTitle: "📋 Задания и Опросы",
+                tasksDesc: "Проходи опросы от CPX Research и получай сотни 💎 прямо на баланс!",
+                tasksSubdesc: "Награды начисляются автоматически после успешного завершения.",
+                tasksBtn: "🚀 ПЕРЕЙТИ К ОПРОСАМ",
+
                 upgradeTitle: "⚡ Апгрейдер Баланса",
                 chanceLabel: "Шанс",
                 betLabel: "Ставка (💎)",
@@ -522,6 +532,14 @@
                 yourBalance: "Your Balance:",
                 dailyTitle: "⚡ Daily Bonus",
                 claimDrop: "Claim Drop",
+
+                // Translations for new tasks tab
+                navTasks: "Tasks",
+                tasksTitle: "📋 Tasks & Surveys",
+                tasksDesc: "Complete surveys from CPX Research and get hundreds of 💎 directly to your balance!",
+                tasksSubdesc: "Rewards are credited automatically upon successful completion.",
+                tasksBtn: "🚀 OPEN SURVEYS",
+
                 upgradeTitle: "⚡ Balance Upgrader",
                 chanceLabel: "Chance",
                 betLabel: "Bet (💎)",
@@ -557,20 +575,37 @@
             const t = i18n[currentLang];
             document.getElementById('lang-toggle-btn').innerText = currentLang === 'ru' ? '🌐 EN' : '🌐 RU';
             document.getElementById('t-your-balance').innerText = t.yourBalance;
+            
+            // Вкладка Главная
             document.getElementById('t-daily-title').innerText = t.dailyTitle;
             document.getElementById('t-claim-drop').innerText = t.claimDrop;
+            
+            // Вкладка Задания
+            document.getElementById('t-tasks-title').innerText = t.tasksTitle;
+            document.getElementById('t-tasks-desc').innerText = t.tasksDesc;
+            document.getElementById('t-tasks-subdesc').innerText = t.tasksSubdesc;
+            document.getElementById('btn-open-tasks').innerText = t.tasksBtn;
+            document.getElementById('t-nav-tasks').innerText = t.navTasks;
+
+            // Вкладка Апгрейдер
             document.getElementById('t-upgrade-title').innerText = t.upgradeTitle;
             document.getElementById('t-chance-label').innerText = t.chanceLabel;
             document.getElementById('t-bet-label').innerText = t.betLabel;
             document.getElementById('t-win-label').innerText = t.winLabel;
             if (!isSpinning) document.getElementById('upgrade-btn').innerText = t.upgradeBtn;
+            
+            // Вкладка Рефералы
             document.getElementById('t-refs-title').innerText = t.refsTitle;
             document.getElementById('t-ref-desc').innerHTML = t.refDesc;
             document.getElementById('t-friends-count').innerText = t.friendsCount;
             document.getElementById('t-your-link').innerText = t.yourLink;
             document.getElementById('btn-copy-ref').innerText = t.copyRef;
             document.getElementById('btn-share-ref').innerText = t.shareRef;
+            
+            // Вкладка Вывод
             document.getElementById('t-withdraw-title').innerText = t.withdrawTitle;
+            
+            // Навигация
             document.getElementById('t-nav-main').innerText = t.navMain;
             document.getElementById('t-nav-upgrade').innerText = t.navUpgrade;
             document.getElementById('t-nav-refs').innerText = t.navRefs;
@@ -645,6 +680,21 @@
 
         function updateCalculationsFromTarget() {
             updateCalculations();
+        }
+
+        // Интеграция с CPX Research
+        function openCPXTasks() {
+            let userId = tg?.initDataUnsafe?.user?.id || 123456789;
+            
+            // ВАЖНО: Замени 'YOUR_APP_ID' на реальный ID приложения из админки CPX Research
+            const appId = 'YOUR_APP_ID'; 
+            let cpxUrl = `https://offers.cpx-research.com/index.php?app_id=${appId}&ext_user_id=${userId}`;
+            
+            if (tg && tg.openLink) {
+                tg.openLink(cpxUrl); // Откроет браузер поверх телеграма
+            } else {
+                window.open(cpxUrl, '_blank');
+            }
         }
 
         async function loadUserData() {
