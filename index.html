@@ -43,7 +43,7 @@
         .header {
             background: linear-gradient(135deg, #171a21, #2a475e);
             border-radius: 16px;
-            padding: 16px;
+            padding: 18px 16px;
             text-align: center;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
             margin-bottom: 16px;
@@ -51,23 +51,23 @@
             position: relative;
         }
 
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-
         .title { 
-            font-size: 20px; 
-            font-weight: bold; 
+            font-size: 28px; 
+            font-weight: 800; 
             color: var(--accent-blue); 
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
+            margin-top: 4px;
+            margin-bottom: 8px;
+            text-shadow: 0 0 12px rgba(102, 192, 244, 0.5);
         }
 
         .lang-btn {
+            position: absolute;
+            top: 14px;
+            right: 14px;
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid var(--accent-blue);
             color: #fff;
@@ -269,10 +269,8 @@
 </head>
 <body>
     <div class="header">
-        <div class="header-top">
-            <div class="title">🎮 SteamDrop</div>
-            <button class="lang-btn" id="lang-toggle-btn" onclick="toggleLanguage()">🌐 EN</button>
-        </div>
+        <button class="lang-btn" id="lang-toggle-btn" onclick="toggleLanguage()">🌐 EN</button>
+        <div class="title">🎮 SteamDrop</div>
         <div class="subtitle" id="t-your-balance">Твой баланс:</div>
         <div class="balance-box"><span id="balance">...</span> 💎</div>
     </div>
@@ -680,7 +678,7 @@
             }
         }
 
-        // Инициализация при старте
+        // Инициализация
         applyLanguage();
         updateCalculations();
         loadUserData();
