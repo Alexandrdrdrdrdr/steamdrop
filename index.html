@@ -725,7 +725,6 @@
             if (isSpinning) return;
             
             let userId = tg?.initDataUnsafe?.user?.id || 123456789;
-
             let bet = parseInt(document.getElementById('bet-input').value) || 0;
             let target = parseInt(document.getElementById('target-input').value) || 0;
 
@@ -799,6 +798,7 @@
             }
         }
 
+        // Автоматический запуск инициализации при открытии страницы
         applyLanguage();
         updateCalculations();
         loadUserData();
