@@ -299,7 +299,7 @@
             bottom: 0; left: 0; right: 0;
             background: #171a21;
             display: flex;
-            justify-content: space-around;
+            justify-around: space-around;
             padding: 10px 0 14px 0;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             z-index: 1000;
@@ -612,10 +612,10 @@
             else alert(text);
         }
 
-        // Обновленная функция для Bitlabs
+        // Функция открытия Bitlabs
         function openBitlabsBrowser() {
             let userId = tg?.initDataUnsafe?.user?.id || 123456789;
-            const bitlabsToken = 'YOUR_BITLABS_TOKEN'; // Вставь сюда свой App Token от Bitlabs
+            const bitlabsToken = '780e236a-0cb6-488f-96cd-791cc00ecef6';
             let bitlabsUrl = `https://web.bitlabs.ai/?uid=${userId}&token=${bitlabsToken}`;
             
             if (tg && tg.openLink) {
