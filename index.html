@@ -150,7 +150,7 @@
             background: var(--accent-yellow);
             transform-origin: bottom center;
             z-index: 3;
-            transition: transform 3s cubic-bezier(0.15, 0.9, 0.2, 1);
+            transition: transform 3.8s cubic-bezier(0.15, 0.9, 0.2, 1);
             border-radius: 2px;
             box-shadow: 0 0 8px var(--accent-yellow);
         }
@@ -299,7 +299,7 @@
             bottom: 0; left: 0; right: 0;
             background: #171a21;
             display: flex;
-            justify-around: space-around;
+            justify-content: space-around;
             padding: 10px 0 14px 0;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             z-index: 1000;
@@ -327,6 +327,15 @@
         .tab-content.active {
             display: flex;
         }
+
+        .bitlabs-frame {
+            width: 100%;
+            height: 480px;
+            border: none;
+            border-radius: 12px;
+            background: #fff;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -347,14 +356,17 @@
         </div>
     </div>
 
-    <!-- Вкладка 2: Задания (Открытие Bitlabs через браузер Telegram) -->
+    <!-- Вкладка 2: Задания (Интеграция Bitlabs) -->
     <div id="tab-tasks" class="tab-content">
         <div class="section-title" id="t-tasks-title">📋 Заработок на опросах</div>
-        <div class="card" style="padding: 30px 16px;">
-            <div style="font-size: 48px; margin-bottom: 12px;">📊</div>
-            <div style="font-size: 18px; font-weight: bold; margin-bottom: 8px;" id="t-tasks-heading">Платные опросы Bitlabs</div>
-            <div class="subtitle" style="margin-bottom: 20px;" id="t-tasks-desc">Пройди доступные опросы и получи кристаллы прямо на баланс SteamDrop!</div>
-            <button class="btn-upgrade" onclick="openBitlabsBrowser()" id="t-tasks-btn">🌐 ОТКРЫТЬ ОПРОСЫ</button>
+        <div class="card" style="padding: 16px;">
+            <div style="font-size: 32px; margin-bottom: 6px;">📊</div>
+            <div style="font-size: 16px; font-weight: bold; margin-bottom: 4px;" id="t-tasks-heading">Платные опросы Bitlabs</div>
+            <div class="subtitle" style="margin-bottom: 12px;" id="t-tasks-desc">Пройди доступные опросы и получи кристаллы прямо на баланс SteamDrop!</div>
+            
+            <iframe id="bitlabs-iframe" class="bitlabs-frame" src="about:blank" allow="geolocation"></iframe>
+
+            <button class="btn-upgrade" style="margin-top: 12px;" onclick="openBitlabsBrowser()" id="t-tasks-btn">🌐 ОТКРЫТЬ ВО ВНЕШНЕМ БРАУЗЕРЕ</button>
         </div>
     </div>
 
@@ -492,7 +504,7 @@
                 tasksTitle: "📋 Заработок на опросах",
                 tasksHeading: "Платные опросы Bitlabs",
                 tasksDesc: "Пройди доступные опросы и получи кристаллы прямо на баланс SteamDrop!",
-                tasksBtn: "🌐 ОТКРЫТЬ ОПРОСЫ",
+                tasksBtn: "🌐 ОТКРЫТЬ ВО ВНЕШНЕМ БРАУЗЕРЕ",
                 upgradeTitle: "⚡ Апгрейдер Баланса",
                 chanceLabel: "Шанс",
                 betLabel: "Ставка (💎)",
@@ -524,7 +536,7 @@
                 tasksTitle: "📋 Earn by Surveys",
                 tasksHeading: "Bitlabs Paid Surveys",
                 tasksDesc: "Complete available surveys and get crystals directly to your SteamDrop balance!",
-                tasksBtn: "🌐 OPEN SURVEYS",
+                tasksBtn: "🌐 OPEN IN EXTERNAL BROWSER",
                 upgradeTitle: "⚡ Balance Upgrader",
                 chanceLabel: "Chance",
                 betLabel: "Bet (💎)",
@@ -551,7 +563,7 @@
         };
 
         let currentLang = localStorage.getItem('app_lang') || 'ru';
-        let currentMultiplier = 2.0;
+        let currentMultiplier = 1.5;
         let isSpinning = false;
         let userRefLink = "";
         let userStreakDays = 0;
@@ -612,12 +624,30 @@
             else alert(text);
         }
 
-        // Функция открытия Bitlabs
-        function openBitlabsBrowser() {
-            let userId = tg?.initDataUnsafe?.user?.id || 123456789;
+        function getUserId() {
+            let id = tg?.initDataUnsafe?.user?.id;
+            if (!id) {
+                id = localStorage.getItem('guest_uid') || 'guest_' + Math.floor(Math.random() * 1000000);
+                localStorage.setItem('guest_uid', id);
+            }
+            return id;
+        }
+
+        function getBitlabsUrl() {
+            const userId = getUserId();
             const bitlabsToken = '780e236a-0cb6-488f-96cd-791cc00ecef6';
-            let bitlabsUrl = `https://web.bitlabs.ai/?uid=${userId}&token=${bitlabsToken}`;
-            
+            return `https://web.bitlabs.ai/?token=${bitlabsToken}&uid=${userId}`;
+        }
+
+        function loadBitlabsIframe() {
+            const iframe = document.getElementById('bitlabs-iframe');
+            if (iframe && iframe.src === "about:blank") {
+                iframe.src = getBitlabsUrl();
+            }
+        }
+
+        function openBitlabsBrowser() {
+            const bitlabsUrl = getBitlabsUrl();
             if (tg && tg.openLink) {
                 tg.openLink(bitlabsUrl);
             } else {
@@ -630,6 +660,10 @@
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
             document.getElementById(`tab-${tabName}`).classList.add('active');
             el.classList.add('active');
+
+            if (tabName === 'tasks') {
+                loadBitlabsIframe();
+            }
         }
 
         function setMultiplier(mult, btn) {
@@ -647,9 +681,14 @@
             let targetInput = document.getElementById('target-input');
 
             let bet = parseInt(betInput.value) || 0;
-            let target = parseInt(targetInput.value) || 0;
 
+            if (document.activeElement === betInput && currentMultiplier) {
+                targetInput.value = Math.round(bet * currentMultiplier);
+            }
+
+            let target = parseInt(targetInput.value) || 0;
             let maxTarget = bet * 90;
+
             if (target > maxTarget && maxTarget > 0) {
                 target = maxTarget;
                 targetInput.value = target;
@@ -660,7 +699,6 @@
                 chance = Math.min(90.0, Math.max(1.0, chance));
 
                 document.getElementById('chance-display').innerText = chance.toFixed(1) + '%';
-                
                 document.getElementById('wheel-ring').style.background = 
                     `conic-gradient(var(--accent-blue) 0% ${chance}%, #2a3f5a ${chance}% 100%)`;
             } else {
@@ -675,7 +713,7 @@
         }
 
         async function loadUserData() {
-            let userId = tg?.initDataUnsafe?.user?.id || 123456789;
+            let userId = getUserId();
 
             try {
                 let response = await fetch(`${SERVER_URL}/api/user?user_id=${userId}`, {
@@ -700,10 +738,25 @@
             }
         }
 
+        function fallbackCopy(text) {
+            const input = document.createElement('input');
+            input.value = text;
+            document.body.appendChild(input);
+            input.select();
+            document.execCommand('copy');
+            document.body.removeChild(input);
+            notify(i18n[currentLang].copySuccess);
+        }
+
         function copyRefLink() {
             if (!userRefLink) return notify("Link is loading...");
-            navigator.clipboard.writeText(userRefLink);
-            notify(i18n[currentLang].copySuccess);
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(userRefLink).then(() => {
+                    notify(i18n[currentLang].copySuccess);
+                }).catch(() => fallbackCopy(userRefLink));
+            } else {
+                fallbackCopy(userRefLink);
+            }
         }
 
         function shareRefLink() {
@@ -718,7 +771,7 @@
         }
 
         async function claimDailyDrop() {
-            let userId = tg?.initDataUnsafe?.user?.id || 123456789;
+            let userId = getUserId();
 
             try {
                 let response = await fetch(`${SERVER_URL}/api/claim`, {
@@ -742,7 +795,7 @@
         async function playUpgrade() {
             if (isSpinning) return;
             
-            let userId = tg?.initDataUnsafe?.user?.id || 123456789;
+            let userId = getUserId();
             let bet = parseInt(document.getElementById('bet-input').value) || 0;
             let target = parseInt(document.getElementById('target-input').value) || 0;
 
@@ -797,7 +850,7 @@
         }
 
         async function withdrawReward(itemName, price) {
-            let userId = tg?.initDataUnsafe?.user?.id || 123456789;
+            let userId = getUserId();
 
             try {
                 let response = await fetch(`${SERVER_URL}/api/withdraw`, {
