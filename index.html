@@ -347,16 +347,16 @@
 <body>
     <div class="header">
         <button class="lang-btn" id="lang-toggle-btn" onclick="toggleLanguage()">🌐 EN</button>
-        <div class="title">🪙 SteamDrop</div>
+        <div class="title"> SteamDrop</div>
         <div class="subtitle" id="t-your-balance">Твой баланс:</div>
-        <div class="balance-box"><span id="balance">...</span> 🪙</div>
+        <div class="balance-box"><span id="balance">...</span>  </div>
     </div>
 
     <!-- Вкладка 1: Главная -->
     <div id="tab-main" class="tab-content active">
         <div class="section-title" id="t-daily-title">⚡ Ежедневный Бонус</div>
         <div class="card" onclick="claimDailyDrop()" style="cursor: pointer; border-color: var(--accent-neon);">
-            <div style="font-size: 48px; margin-bottom: 8px;">🪙</div>
+            <div style="font-size: 48px; margin-bottom: 8px;"> </div>
             <div style="font-size: 18px; font-weight: bold; color: var(--accent-neon);" id="t-claim-drop">Забрать Дроп</div>
             <div class="subtitle" id="streak-text" style="margin-top: 6px;">Загрузка...</div>
         </div>
@@ -398,11 +398,11 @@
 
             <div class="upgrader-inputs">
                 <div class="input-box">
-                    <label id="t-bet-label">Ставка (🪙)</label>
+                    <label id="t-bet-label">Ставка </label>
                     <input type="number" id="bet-input" value="100" oninput="updateCalculations()">
                 </div>
                 <div class="input-box">
-                    <label id="t-win-label">Выиграешь (🪙)</label>
+                    <label id="t-win-label">Выиграешь </label>
                     <input type="number" id="target-input" value="200" oninput="updateCalculationsFromTarget()">
                 </div>
             </div>
@@ -417,7 +417,7 @@
         <div class="section-title" id="t-refs-title">👥 Реферальная система</div>
         <div class="card">
             <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;" id="t-ref-desc">
-                Получай <b style="color: var(--accent-neon);">+200 🪙</b> за каждого друга, когда он наберет <b>500 монет</b>!
+                Получай <b style="color: var(--accent-neon);">+200  </b> за каждого друга, когда он наберет <b>500 </b>!
             </div>
             <div style="margin: 16px 0; background: #050505; padding: 12px; border-radius: 8px; border: 1px solid rgba(57,255,20,0.2);">
                 <div style="font-size: 11px; color: var(--text-muted);" id="t-friends-count">Приглашено друзей:</div>
@@ -434,52 +434,52 @@
 
     <!-- Вкладка 5: Вывод Наград -->
     <div id="tab-withdraw" class="tab-content">
-        <div class="section-title" id="t-withdraw-title">🎁 Забрать Награду</div>
+        <div class="section-title" id="t-withdraw-title"> Забрать Награду</div>
         <div class="withdraw-list">
             <div class="withdraw-item">
                 <div class="withdraw-info">
-                    <div class="withdraw-title">💳 Steam Card $5</div>
-                    <div class="withdraw-price">5 000 🪙</div>
+                    <div class="withdraw-title"> Steam Card $5</div>
+                    <div class="withdraw-price">5 000 </div>
                 </div>
                 <button class="btn-withdraw-action" onclick="withdrawReward('Steam Card $5', 5000)">ВЫВЕСТИ</button>
             </div>
             <div class="withdraw-item">
                 <div class="withdraw-info">
                     <div class="withdraw-title">
-                        💳 Steam Card $10 
+                         Steam Card $10 
                         <span class="badge-discount">-5%</span>
                     </div>
-                    <div class="withdraw-price">9 500 🪙</div>
+                    <div class="withdraw-price">9 500 </div>
                 </div>
                 <button class="btn-withdraw-action" onclick="withdrawReward('Steam Card $10', 9500)">ВЫВЕСТИ</button>
             </div>
             <div class="withdraw-item">
                 <div class="withdraw-info">
                     <div class="withdraw-title">
-                        💳 Steam Card $25 
+                         Steam Card $25 
                         <span class="badge-discount">-8%</span>
                     </div>
-                    <div class="withdraw-price">23 000 🪙</div>
+                    <div class="withdraw-price">23 000 </div>
                 </div>
                 <button class="btn-withdraw-action" onclick="withdrawReward('Steam Card $25', 23000)">ВЫВЕСТИ</button>
             </div>
             <div class="withdraw-item">
                 <div class="withdraw-info">
                     <div class="withdraw-title">
-                        💳 Steam Card $50 
+                         Steam Card $50 
                         <span class="badge-discount">-12%</span>
                     </div>
-                    <div class="withdraw-price">44 000 🪙</div>
+                    <div class="withdraw-price">44 000 </div>
                 </div>
                 <button class="btn-withdraw-action" onclick="withdrawReward('Steam Card $50', 44000)">ВЫВЕСТИ</button>
             </div>
             <div class="withdraw-item">
                 <div class="withdraw-info">
                     <div class="withdraw-title">
-                        💳 Steam Card $100 
+                         Steam Card $100 
                         <span class="badge-discount">-15%</span>
                     </div>
-                    <div class="withdraw-price">85 000 🪙</div>
+                    <div class="withdraw-price">85 000 </div>
                 </div>
                 <button class="btn-withdraw-action" onclick="withdrawReward('Steam Card $100', 85000)">ВЫВЕСТИ</button>
             </div>
