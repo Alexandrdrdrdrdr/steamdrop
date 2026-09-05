@@ -347,9 +347,15 @@
         </div>
     </div>
 
-    <!-- Вкладка 2: Задания (CPX Research) встроены через iframe -->
-    <div id="tab-tasks" class="tab-content" style="flex-grow: 1; min-height: 60vh; margin-bottom: 10px;">
-        <iframe id="cpx-iframe" src="" style="width: 100%; height: 100%; min-height: 500px; border: none; border-radius: 14px; background: #ffffff;"></iframe>
+    <!-- Вкладка 2: Задания (Открытие CPX Research через браузер Telegram) -->
+    <div id="tab-tasks" class="tab-content">
+        <div class="section-title" id="t-tasks-title">📋 Заработок на опросах</div>
+        <div class="card" style="padding: 30px 16px;">
+            <div style="font-size: 48px; margin-bottom: 12px;">📊</div>
+            <div style="font-size: 18px; font-weight: bold; margin-bottom: 8px;" id="t-tasks-heading">Платные опросы CPX</div>
+            <div class="subtitle" style="margin-bottom: 20px;" id="t-tasks-desc">Пройди доступные опросы и получи кристаллы прямо на баланс SteamDrop!</div>
+            <button class="btn-upgrade" onclick="openCPXBrowser()" id="t-tasks-btn">🌐 ОТКРЫТЬ ОПРОСЫ</button>
+        </div>
     </div>
 
     <!-- Вкладка 3: Апгрейдер -->
@@ -483,6 +489,10 @@
                 dailyTitle: "⚡ Ежедневный Бонус",
                 claimDrop: "Забрать Дроп",
                 navTasks: "Задания",
+                tasksTitle: "📋 Заработок на опросах",
+                tasksHeading: "Платные опросы CPX",
+                tasksDesc: "Пройди доступные опросы и получи кристаллы прямо на баланс SteamDrop!",
+                tasksBtn: "🌐 ОТКРЫТЬ ОПРОСЫ",
                 upgradeTitle: "⚡ Апгрейдер Баланса",
                 chanceLabel: "Шанс",
                 betLabel: "Ставка (💎)",
@@ -511,6 +521,10 @@
                 dailyTitle: "⚡ Daily Bonus",
                 claimDrop: "Claim Drop",
                 navTasks: "Tasks",
+                tasksTitle: "📋 Earn by Surveys",
+                tasksHeading: "CPX Paid Surveys",
+                tasksDesc: "Complete available surveys and get crystals directly to your SteamDrop balance!",
+                tasksBtn: "🌐 OPEN SURVEYS",
                 upgradeTitle: "⚡ Balance Upgrader",
                 chanceLabel: "Chance",
                 betLabel: "Bet (💎)",
@@ -550,6 +564,11 @@
             document.getElementById('t-daily-title').innerText = t.dailyTitle;
             document.getElementById('t-claim-drop').innerText = t.claimDrop;
             document.getElementById('t-nav-tasks').innerText = t.navTasks;
+
+            document.getElementById('t-tasks-title').innerText = t.tasksTitle;
+            document.getElementById('t-tasks-heading').innerText = t.tasksHeading;
+            document.getElementById('t-tasks-desc').innerText = t.tasksDesc;
+            document.getElementById('t-tasks-btn').innerText = t.tasksBtn;
 
             document.getElementById('t-upgrade-title').innerText = t.upgradeTitle;
             document.getElementById('t-chance-label').innerText = t.chanceLabel;
@@ -593,13 +612,15 @@
             else alert(text);
         }
 
-        function loadCPX() {
+        function openCPXBrowser() {
             let userId = tg?.initDataUnsafe?.user?.id || 123456789;
             const appId = '35934';
-            let iframe = document.getElementById('cpx-iframe');
+            let cpxUrl = `https://offers.cpx-research.com/index.php?app_id=${appId}&ext_user_id=${userId}`;
             
-            if (!iframe.src || iframe.src === window.location.href) {
-                iframe.src = `https://offers.cpx-research.com/index.php?app_id=${appId}&ext_user_id=${userId}`;
+            if (tg && tg.openLink) {
+                tg.openLink(cpxUrl);
+            } else {
+                window.open(cpxUrl, '_blank');
             }
         }
 
@@ -608,10 +629,6 @@
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
             document.getElementById(`tab-${tabName}`).classList.add('active');
             el.classList.add('active');
-            
-            if (tabName === 'tasks') {
-                loadCPX();
-            }
         }
 
         function setMultiplier(mult, btn) {
@@ -764,12 +781,12 @@
                     arrow.style.transition = 'none';
                     arrow.style.transform = `rotate(${rollDegree}deg)`;
                     setTimeout(() => {
-                        arrow.style.transition = 'transform 3s cubic-bezier(0.15, 0.9, 0.2, 1)';
+                        arrow.style.transition = 'transform 3.8s cubic-bezier(0.15, 0.9, 0.2, 1)';
                     }, 50);
 
                     isSpinning = false;
                     document.getElementById('upgrade-btn').innerText = i18n[currentLang].upgradeBtn;
-                }, 3200);
+                }, 3800);
 
             } catch (e) {
                 notify("Server connection error!");
@@ -798,7 +815,6 @@
             }
         }
 
-        // Автоматический запуск инициализации при открытии страницы
         applyLanguage();
         updateCalculations();
         loadUserData();
