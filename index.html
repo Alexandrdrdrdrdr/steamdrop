@@ -232,6 +232,69 @@
             margin-top: 10px;
         }
 
+        /* Вывод средств — список карт */
+        .withdraw-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .withdraw-item {
+            background: #101823;
+            border: 1px solid rgba(102, 192, 244, 0.15);
+            border-radius: 12px;
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            text-align: left;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .withdraw-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .withdraw-title {
+            font-size: 15px;
+            font-weight: 800;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .withdraw-price {
+            font-size: 13px;
+            color: var(--accent-yellow);
+            font-weight: 700;
+        }
+
+        .badge-discount {
+            background: rgba(40, 167, 69, 0.2);
+            color: #28a745;
+            border: 1px solid #28a745;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .btn-withdraw-action {
+            background: linear-gradient(135deg, #ffc107, #ff8800);
+            color: #000;
+            border: none;
+            padding: 8px 14px;
+            font-size: 13px;
+            font-weight: 800;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
+        }
+
         .nav-bar {
             position: fixed;
             bottom: 0; left: 0; right: 0;
@@ -270,7 +333,7 @@
 <body>
     <div class="header">
         <button class="lang-btn" id="lang-toggle-btn" onclick="toggleLanguage()">🌐 EN</button>
-        <div class="title">  SteamDrop</div>
+        <div class="title">🎮 SteamDrop</div>
         <div class="subtitle" id="t-your-balance">Твой баланс:</div>
         <div class="balance-box"><span id="balance">...</span> 💎</div>
     </div>
@@ -344,13 +407,65 @@
     <!-- Вкладка 4: Вывод Наград -->
     <div id="tab-withdraw" class="tab-content">
         <div class="section-title" id="t-withdraw-title">🎁 Забрать Награду</div>
-        <div class="card">
-            <div style="font-size: 40px; margin-bottom: 6px;">💳</div>
-            <div style="font-size: 18px; font-weight: bold; color: var(--accent-yellow);" id="t-item-title">Подарочная карта Steam $5</div>
-            <div style="font-size: 13px; color: var(--text-muted); margin: 8px 0 16px;" id="t-withdraw-desc">
-                Накопите <b style="color: var(--accent-blue);">5000 💎</b>, чтобы обменять их на подарочную карту Steam!
+        <div class="withdraw-list">
+
+            <!-- Карта $5 -->
+            <div class="withdraw-item">
+                <div class="withdraw-info">
+                    <div class="withdraw-title">💳 Steam Card $5</div>
+                    <div class="withdraw-price">5 000 💎</div>
+                </div>
+                <button class="btn-withdraw-action" onclick="withdrawReward('Steam Card $5', 5000)">ВЫВЕСТИ</button>
             </div>
-            <button class="btn-upgrade" id="btn-withdraw" onclick="withdrawReward()">🎁 ЗАБРАТЬ КАРТУ $5 (5000 💎)</button>
+
+            <!-- Карта $10 -->
+            <div class="withdraw-item">
+                <div class="withdraw-info">
+                    <div class="withdraw-title">
+                        💳 Steam Card $10 
+                        <span class="badge-discount">-5%</span>
+                    </div>
+                    <div class="withdraw-price">9 500 💎</div>
+                </div>
+                <button class="btn-withdraw-action" onclick="withdrawReward('Steam Card $10', 9500)">ВЫВЕСТИ</button>
+            </div>
+
+            <!-- Карта $25 -->
+            <div class="withdraw-item">
+                <div class="withdraw-info">
+                    <div class="withdraw-title">
+                        💳 Steam Card $25 
+                        <span class="badge-discount">-8%</span>
+                    </div>
+                    <div class="withdraw-price">23 000 💎</div>
+                </div>
+                <button class="btn-withdraw-action" onclick="withdrawReward('Steam Card $25', 23000)">ВЫВЕСТИ</button>
+            </div>
+
+            <!-- Карта $50 -->
+            <div class="withdraw-item">
+                <div class="withdraw-info">
+                    <div class="withdraw-title">
+                        💳 Steam Card $50 
+                        <span class="badge-discount">-12%</span>
+                    </div>
+                    <div class="withdraw-price">44 000 💎</div>
+                </div>
+                <button class="btn-withdraw-action" onclick="withdrawReward('Steam Card $50', 44000)">ВЫВЕСТИ</button>
+            </div>
+
+            <!-- Карта $100 -->
+            <div class="withdraw-item">
+                <div class="withdraw-info">
+                    <div class="withdraw-title">
+                        💳 Steam Card $100 
+                        <span class="badge-discount">-15%</span>
+                    </div>
+                    <div class="withdraw-price">85 000 💎</div>
+                </div>
+                <button class="btn-withdraw-action" onclick="withdrawReward('Steam Card $100', 85000)">ВЫВЕСТИ</button>
+            </div>
+
         </div>
     </div>
 
@@ -393,9 +508,6 @@
                 copyRef: "📋 КОПИРОВАТЬ ССЫЛКУ",
                 shareRef: "✉️ ОТПРАВИТЬ ДРУГУ",
                 withdrawTitle: "🎁 Забрать Награду",
-                itemTitle: "Подарочная карта Steam $5",
-                withdrawDesc: "Накопите <b style='color: var(--accent-blue);'>5000 💎</b>, чтобы обменять их на подарочную карту Steam!",
-                withdrawBtn: "🎁 ЗАБРАТЬ КАРТУ $5 (5000 💎)",
                 navMain: "Главная",
                 navUpgrade: "Апгрейдер",
                 navRefs: "Друзья",
@@ -403,7 +515,8 @@
                 streakPrefix: "Стрик:",
                 daysShort: "дн.",
                 copySuccess: "Реферальная ссылка скопирована!",
-                loading: "Загрузка..."
+                loading: "Загрузка...",
+                withdrawBtns: "ВЫВЕСТИ"
             },
             en: {
                 yourBalance: "Your Balance:",
@@ -422,9 +535,6 @@
                 copyRef: "📋 COPY LINK",
                 shareRef: "✉️ SHARE WITH FRIEND",
                 withdrawTitle: "🎁 Claim Reward",
-                itemTitle: "Steam Gift Card $5",
-                withdrawDesc: "Collect <b style='color: var(--accent-blue);'>5000 💎</b> to redeem a Steam Gift Card!",
-                withdrawBtn: "🎁 CLAIM $5 CARD (5000 💎)",
                 navMain: "Home",
                 navUpgrade: "Upgrader",
                 navRefs: "Friends",
@@ -432,7 +542,8 @@
                 streakPrefix: "Streak:",
                 daysShort: "days",
                 copySuccess: "Referral link copied!",
-                loading: "Loading..."
+                loading: "Loading...",
+                withdrawBtns: "WITHDRAW"
             }
         };
 
@@ -460,13 +571,14 @@
             document.getElementById('btn-copy-ref').innerText = t.copyRef;
             document.getElementById('btn-share-ref').innerText = t.shareRef;
             document.getElementById('t-withdraw-title').innerText = t.withdrawTitle;
-            document.getElementById('t-item-title').innerText = t.itemTitle;
-            document.getElementById('t-withdraw-desc').innerHTML = t.withdrawDesc;
-            document.getElementById('btn-withdraw').innerText = t.withdrawBtn;
             document.getElementById('t-nav-main').innerText = t.navMain;
             document.getElementById('t-nav-upgrade').innerText = t.navUpgrade;
             document.getElementById('t-nav-refs').innerText = t.navRefs;
             document.getElementById('t-nav-withdraw').innerText = t.navWithdraw;
+
+            document.querySelectorAll('.btn-withdraw-action').forEach(btn => {
+                btn.innerText = t.withdrawBtns;
+            });
 
             if (userStreakDays > 0) {
                 document.getElementById("streak-text").innerText = `${t.streakPrefix} ${userStreakDays} ${t.daysShort}`;
@@ -658,14 +770,14 @@
             }
         }
 
-        async function withdrawReward() {
+        async function withdrawReward(itemName, price) {
             let userId = tg?.initDataUnsafe?.user?.id || 123456789;
 
             try {
                 let response = await fetch(`${SERVER_URL}/api/withdraw`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
-                    body: JSON.stringify({ user_id: userId, item: "Steam Gift Card $5" })
+                    body: JSON.stringify({ user_id: userId, item: itemName, cost: price })
                 });
 
                 let result = await response.json();
