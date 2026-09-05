@@ -347,14 +347,14 @@
         </div>
     </div>
 
-    <!-- Вкладка 2: Задания (Открытие CPX Research через браузер Telegram) -->
+    <!-- Вкладка 2: Задания (Открытие Bitlabs через браузер Telegram) -->
     <div id="tab-tasks" class="tab-content">
         <div class="section-title" id="t-tasks-title">📋 Заработок на опросах</div>
         <div class="card" style="padding: 30px 16px;">
             <div style="font-size: 48px; margin-bottom: 12px;">📊</div>
-            <div style="font-size: 18px; font-weight: bold; margin-bottom: 8px;" id="t-tasks-heading">Платные опросы CPX</div>
+            <div style="font-size: 18px; font-weight: bold; margin-bottom: 8px;" id="t-tasks-heading">Платные опросы Bitlabs</div>
             <div class="subtitle" style="margin-bottom: 20px;" id="t-tasks-desc">Пройди доступные опросы и получи кристаллы прямо на баланс SteamDrop!</div>
-            <button class="btn-upgrade" onclick="openCPXBrowser()" id="t-tasks-btn">🌐 ОТКРЫТЬ ОПРОСЫ</button>
+            <button class="btn-upgrade" onclick="openBitlabsBrowser()" id="t-tasks-btn">🌐 ОТКРЫТЬ ОПРОСЫ</button>
         </div>
     </div>
 
@@ -490,7 +490,7 @@
                 claimDrop: "Забрать Дроп",
                 navTasks: "Задания",
                 tasksTitle: "📋 Заработок на опросах",
-                tasksHeading: "Платные опросы CPX",
+                tasksHeading: "Платные опросы Bitlabs",
                 tasksDesc: "Пройди доступные опросы и получи кристаллы прямо на баланс SteamDrop!",
                 tasksBtn: "🌐 ОТКРЫТЬ ОПРОСЫ",
                 upgradeTitle: "⚡ Апгрейдер Баланса",
@@ -522,7 +522,7 @@
                 claimDrop: "Claim Drop",
                 navTasks: "Tasks",
                 tasksTitle: "📋 Earn by Surveys",
-                tasksHeading: "CPX Paid Surveys",
+                tasksHeading: "Bitlabs Paid Surveys",
                 tasksDesc: "Complete available surveys and get crystals directly to your SteamDrop balance!",
                 tasksBtn: "🌐 OPEN SURVEYS",
                 upgradeTitle: "⚡ Balance Upgrader",
@@ -612,15 +612,16 @@
             else alert(text);
         }
 
-        function openCPXBrowser() {
+        // Обновленная функция для Bitlabs
+        function openBitlabsBrowser() {
             let userId = tg?.initDataUnsafe?.user?.id || 123456789;
-            const appId = '35934';
-            let cpxUrl = `https://offers.cpx-research.com/index.php?app_id=${appId}&ext_user_id=${userId}`;
+            const bitlabsToken = 'YOUR_BITLABS_TOKEN'; // Вставь сюда свой App Token от Bitlabs
+            let bitlabsUrl = `https://web.bitlabs.ai/?uid=${userId}&token=${bitlabsToken}`;
             
             if (tg && tg.openLink) {
-                tg.openLink(cpxUrl);
+                tg.openLink(bitlabsUrl);
             } else {
-                window.open(cpxUrl, '_blank');
+                window.open(bitlabsUrl, '_blank');
             }
         }
 
