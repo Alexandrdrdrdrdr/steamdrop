@@ -348,11 +348,11 @@
         <div class="section-title" id="t-withdraw-title">🎁 Забрать Награду</div>
         <div class="card">
             <div style="font-size: 40px; margin-bottom: 6px;">💳</div>
-            <div style="font-size: 18px; font-weight: bold; color: var(--accent-yellow);">Steam Gift Card $5</div>
+            <div style="font-size: 18px; font-weight: bold; color: var(--accent-yellow);" id="t-item-title">Подарочная карта Steam $5</div>
             <div style="font-size: 13px; color: var(--text-muted); margin: 8px 0 16px;" id="t-withdraw-desc">
-                Накопите <b style="color: var(--accent-blue);">5000 💎</b>, чтобы обменять их на подарочную карту 5 USD Steam!
+                Накопите <b style="color: var(--accent-blue);">5000 💎</b>, чтобы обменять их на подарочную карту Steam!
             </div>
-            <button class="btn-upgrade" id="btn-withdraw" onclick="withdrawReward()">🎁 ЗАБРАТЬ (Подарочную карту на 5 USD )</button>
+            <button class="btn-upgrade" id="btn-withdraw" onclick="withdrawReward()">🎁 ЗАБРАТЬ КАРТУ $5 (5000 💎)</button>
         </div>
     </div>
 
@@ -395,8 +395,9 @@
                 copyRef: "📋 КОПИРОВАТЬ ССЫЛКУ",
                 shareRef: "✉️ ОТПРАВИТЬ ДРУГУ",
                 withdrawTitle: "🎁 Забрать Награду",
+                itemTitle: "Подарочная карта Steam $5",
                 withdrawDesc: "Накопите <b style='color: var(--accent-blue);'>5000 💎</b>, чтобы обменять их на подарочную карту Steam!",
-                withdrawBtn: "🎁 ЗАБРАТЬ (5000 💎)",
+                withdrawBtn: "🎁 ЗАБРАТЬ КАРТУ $5 (5000 💎)",
                 navMain: "Главная",
                 navUpgrade: "Апгрейдер",
                 navRefs: "Друзья",
@@ -423,8 +424,9 @@
                 copyRef: "📋 COPY LINK",
                 shareRef: "✉️ SHARE WITH FRIEND",
                 withdrawTitle: "🎁 Claim Reward",
+                itemTitle: "Steam Gift Card $5",
                 withdrawDesc: "Collect <b style='color: var(--accent-blue);'>5000 💎</b> to redeem a Steam Gift Card!",
-                withdrawBtn: "🎁 CLAIM (5000 💎)",
+                withdrawBtn: "🎁 CLAIM $5 CARD (5000 💎)",
                 navMain: "Home",
                 navUpgrade: "Upgrader",
                 navRefs: "Friends",
@@ -460,6 +462,7 @@
             document.getElementById('btn-copy-ref').innerText = t.copyRef;
             document.getElementById('btn-share-ref').innerText = t.shareRef;
             document.getElementById('t-withdraw-title').innerText = t.withdrawTitle;
+            document.getElementById('t-item-title').innerText = t.itemTitle;
             document.getElementById('t-withdraw-desc').innerHTML = t.withdrawDesc;
             document.getElementById('btn-withdraw').innerText = t.withdrawBtn;
             document.getElementById('t-nav-main').innerText = t.navMain;
