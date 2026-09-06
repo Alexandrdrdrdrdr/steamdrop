@@ -595,6 +595,9 @@
         let isSpinning = false;
         let userRefLink = "";
         let userStreakDays = 0;
+        
+        // НОВАЯ ПЕРЕМЕННАЯ ДЛЯ ПЛАВНОГО КОЛЕСА
+        let currentRotation = 0;
 
         function applyLanguage() {
             const t = i18n[currentLang];
@@ -844,25 +847,32 @@
                 let result = await response.json();
                 if (result.success) {
                     let arrow = document.getElementById('wheel-arrow');
+                    
                     let chance = (bet / target) * 90.0;
                     chance = Math.min(90.0, Math.max(1.0, chance));
                     
-                    let targetDeg = result.won ? (chance * 3.6 / 2) : (chance * 3.6 + 40);
-                    let spins = 5 * 360;
-                    let totalRotation = spins + targetDeg;
+                    // Переводим шансы в градусы выигрышной зоны
+                    let winDegrees = chance * 3.6;
 
-                    arrow.style.transform = `rotate(${totalRotation}deg)`;
+                    // Выбираем случайную точку для остановки стрелки
+                    let stopAngle = result.won 
+                        ? (Math.random() * (winDegrees - 8) + 4) // Любая точка внутри зеленой зоны (победа)
+                        : (Math.random() * (360 - winDegrees - 16) + winDegrees + 8); // Любая точка внутри темной зоны (поражение)
+
+                    // Крутим колесо на 5 полных оборотов + новый угол с учетом накопленного значения (currentRotation)
+                    let spins = 5 * 360;
+                    currentRotation += spins + (stopAngle - (currentRotation % 360) + 360) % 360;
+
+                    arrow.style.transform = `rotate(${currentRotation}deg)`;
 
                     setTimeout(() => {
                         document.getElementById("balance").innerText = result.new_balance;
                         let popMsg = i18n[currentLang].winMsg(result.won, bet, target);
                         notify(popMsg);
-                        arrow.style.transition = 'none';
-                        arrow.style.transform = 'rotate(0deg)';
-                        setTimeout(() => arrow.style.transition = 'transform 3.8s cubic-bezier(0.15, 0.9, 0.2, 1)', 50);
+                        
                         isSpinning = false;
                         applyLanguage();
-                    }, 4000);
+                    }, 4000); // Синхронизировано с CSS-переходом 3.8s + небольшая задержка
                 } else {
                     notify(result.message);
                     isSpinning = false;
