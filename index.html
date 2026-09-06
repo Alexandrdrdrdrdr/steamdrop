@@ -542,7 +542,13 @@
                 daysShort: "дн.",
                 copySuccess: "Реферальная ссылка скопирована!",
                 loading: "Загрузка...",
-                withdrawBtns: "ВЫВЕСТИ"
+                withdrawBtns: "ВЫВЕСТИ",
+                winMsg: (win, bet, target) => win 
+                    ? `🎉 УСПЕШНЫЙ АПГРЕЙД!\nВы выиграли ${target}` 
+                    : `❌ НЕУДАЧА!\nВы потеряли ${bet}`,
+                invalidInput: "Укажите корректную ставку и цель!",
+                serverError: "Ошибка подключения к серверу!",
+                linkLoading: "Ссылка загружается..."
             },
             en: {
                 yourBalance: "Your Balance:",
@@ -574,7 +580,13 @@
                 daysShort: "days",
                 copySuccess: "Referral link copied!",
                 loading: "Loading...",
-                withdrawBtns: "WITHDRAW"
+                withdrawBtns: "WITHDRAW",
+                winMsg: (win, bet, target) => win 
+                    ? `🎉 SUCCESSFUL UPGRADE!\nYou won ${target}` 
+                    : `❌ UPGRADE FAILED!\nYou lost ${bet}`,
+                invalidInput: "Enter valid bet and target!",
+                serverError: "Server connection error!",
+                linkLoading: "Link is loading..."
             }
         };
 
@@ -732,7 +744,7 @@
             let userId = getUserId();
 
             try {
-                let response = await fetch(`${SERVER_URL}/api/user?user_id=${userId}`, {
+                let response = await fetch(`${SERVER_URL}/api/user?user_id=${userId}&lang=${currentLang}`, {
                     headers: { "ngrok-skip-browser-warning": "true" }
                 });
                 let result = await response.json();
@@ -765,7 +777,7 @@
         }
 
         function copyRefLink() {
-            if (!userRefLink) return notify("Link is loading...");
+            if (!userRefLink) return notify(i18n[currentLang].linkLoading);
             if (navigator.clipboard && window.isSecureContext) {
                 navigator.clipboard.writeText(userRefLink).then(() => {
                     notify(i18n[currentLang].copySuccess);
@@ -776,7 +788,7 @@
         }
 
         function shareRefLink() {
-            if (!userRefLink) return notify("Link is loading...");
+            if (!userRefLink) return notify(i18n[currentLang].linkLoading);
             let text = encodeURIComponent(currentLang === 'ru' ? "Заходи в SteamDrop! Моя ссылка:" : "Join SteamDrop! My link:");
             let shareUrl = `https://t.me/share/url?url=${encodeURIComponent(userRefLink)}&text=${text}`;
             if (tg && tg.openTelegramLink) {
@@ -793,7 +805,7 @@
                 let response = await fetch(`${SERVER_URL}/api/claim`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
-                    body: JSON.stringify({ user_id: userId })
+                    body: JSON.stringify({ user_id: userId, lang: currentLang })
                 });
 
                 let result = await response.json();
@@ -804,7 +816,7 @@
                 }
                 notify(result.message);
             } catch (e) {
-                notify("Server connection error!");
+                notify(i18n[currentLang].serverError);
             }
         }
 
@@ -816,7 +828,7 @@
             let target = parseInt(document.getElementById('target-input').value) || 0;
 
             if (bet <= 0 || target <= bet) {
-                return notify("Enter valid bet and target!");
+                return notify(i18n[currentLang].invalidInput);
             }
 
             isSpinning = true;
@@ -826,7 +838,7 @@
                 let response = await fetch(`${SERVER_URL}/api/upgrade`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
-                    body: JSON.stringify({ user_id: userId, bet: bet, target: target })
+                    body: JSON.stringify({ user_id: userId, bet: bet, target: target, lang: currentLang })
                 });
 
                 let result = await response.json();
@@ -843,7 +855,8 @@
 
                     setTimeout(() => {
                         document.getElementById("balance").innerText = result.new_balance;
-                        notify(result.message);
+                        let popMsg = i18n[currentLang].winMsg(result.won, bet, target);
+                        notify(popMsg);
                         arrow.style.transition = 'none';
                         arrow.style.transform = 'rotate(0deg)';
                         setTimeout(() => arrow.style.transition = 'transform 3.8s cubic-bezier(0.15, 0.9, 0.2, 1)', 50);
@@ -856,7 +869,7 @@
                     applyLanguage();
                 }
             } catch (e) {
-                notify("Server connection error!");
+                notify(i18n[currentLang].serverError);
                 isSpinning = false;
                 applyLanguage();
             }
@@ -868,7 +881,7 @@
                 let response = await fetch(`${SERVER_URL}/api/withdraw`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
-                    body: JSON.stringify({ user_id: userId, item: item, price: price })
+                    body: JSON.stringify({ user_id: userId, item: item, price: price, lang: currentLang })
                 });
                 let result = await response.json();
                 if (result.success) {
@@ -876,7 +889,7 @@
                 }
                 notify(result.message);
             } catch (e) {
-                notify("Server connection error!");
+                notify(i18n[currentLang].serverError);
             }
         }
 
