@@ -596,7 +596,6 @@
         let userRefLink = "";
         let userStreakDays = 0;
         
-        // НОВАЯ ПЕРЕМЕННАЯ ДЛЯ ПЛАВНОГО КОЛЕСА
         let currentRotation = 0;
 
         function applyLanguage() {
@@ -854,10 +853,10 @@
                     // Переводим шансы в градусы выигрышной зоны
                     let winDegrees = chance * 3.6;
 
-                    // Выбираем случайную точку для остановки стрелки
-                    let stopAngle = result.won 
-                        ? (Math.random() * (winDegrees - 8) + 4) // Любая точка внутри зеленой зоны (победа)
-                        : (Math.random() * (360 - winDegrees - 16) + winDegrees + 8); // Любая точка внутри темной зоны (поражение)
+                    // Выбираем случайную точку для остановки стрелки (исправлено result.won на result.is_win)
+                    let stopAngle = result.is_win 
+                        ? (Math.random() * (winDegrees - 8) + 4) 
+                        : (Math.random() * (360 - winDegrees - 16) + winDegrees + 8); 
 
                     // Крутим колесо на 5 полных оборотов + новый угол с учетом накопленного значения (currentRotation)
                     let spins = 5 * 360;
@@ -867,12 +866,13 @@
 
                     setTimeout(() => {
                         document.getElementById("balance").innerText = result.new_balance;
-                        let popMsg = i18n[currentLang].winMsg(result.won, bet, target);
+                        // Исправлено result.won на result.is_win
+                        let popMsg = i18n[currentLang].winMsg(result.is_win, bet, target);
                         notify(popMsg);
                         
                         isSpinning = false;
                         applyLanguage();
-                    }, 4000); // Синхронизировано с CSS-переходом 3.8s + небольшая задержка
+                    }, 4000); 
                 } else {
                     notify(result.message);
                     isSpinning = false;
