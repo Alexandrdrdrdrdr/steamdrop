@@ -356,7 +356,7 @@
     <div id="tab-main" class="tab-content active">
         <div class="section-title" id="t-daily-title">⚡ Ежедневный Бонус</div>
         <div class="card" onclick="claimDailyDrop()" style="cursor: pointer; border-color: var(--accent-neon);">
-            <div style="font-size: 48px; margin-bottom: 8px;"> </div>
+            <div style="font-size: 48px; margin-bottom: 8px;">🎁</div>
             <div style="font-size: 18px; font-weight: bold; color: var(--accent-neon);" id="t-claim-drop">Забрать Дроп</div>
             <div class="subtitle" id="streak-text" style="margin-top: 6px;">Загрузка...</div>
         </div>
@@ -434,11 +434,11 @@
 
     <!-- Вкладка 5: Вывод Наград -->
     <div id="tab-withdraw" class="tab-content">
-        <div class="section-title" id="t-withdraw-title"> Забрать Награду</div>
+        <div class="section-title" id="t-withdraw-title">🎁 Забрать Награду</div>
         <div class="withdraw-list">
             <div class="withdraw-item">
                 <div class="withdraw-info">
-                    <div class="withdraw-title"> Steam Card $5</div>
+                    <div class="withdraw-title">🎮 Steam Card $5</div>
                     <div class="withdraw-price">5 000 </div>
                 </div>
                 <button class="btn-withdraw-action" onclick="withdrawReward('Steam Card $5', 5000)">ВЫВЕСТИ</button>
@@ -446,7 +446,7 @@
             <div class="withdraw-item">
                 <div class="withdraw-info">
                     <div class="withdraw-title">
-                         Steam Card $10 
+                        🎮 Steam Card $10 
                         <span class="badge-discount">-5%</span>
                     </div>
                     <div class="withdraw-price">9 500 </div>
@@ -456,7 +456,7 @@
             <div class="withdraw-item">
                 <div class="withdraw-info">
                     <div class="withdraw-title">
-                         Steam Card $25 
+                        🎮 Steam Card $25 
                         <span class="badge-discount">-8%</span>
                     </div>
                     <div class="withdraw-price">23 000 </div>
@@ -466,7 +466,7 @@
             <div class="withdraw-item">
                 <div class="withdraw-info">
                     <div class="withdraw-title">
-                         Steam Card $50 
+                        🎮 Steam Card $50 
                         <span class="badge-discount">-12%</span>
                     </div>
                     <div class="withdraw-price">44 000 </div>
@@ -476,7 +476,7 @@
             <div class="withdraw-item">
                 <div class="withdraw-info">
                     <div class="withdraw-title">
-                         Steam Card $100 
+                        🎮 Steam Card $100 
                         <span class="badge-discount">-15%</span>
                     </div>
                     <div class="withdraw-price">85 000 </div>
@@ -548,7 +548,8 @@
                     : `❌ НЕУДАЧА!\nВы потеряли ${bet}`,
                 invalidInput: "Укажите корректную ставку и цель!",
                 serverError: "Ошибка подключения к серверу!",
-                linkLoading: "Ссылка загружается..."
+                linkLoading: "Ссылка загружается...",
+                authError: "Запустите приложение через Telegram!"
             },
             en: {
                 yourBalance: "Your Balance:",
@@ -586,7 +587,8 @@
                     : `❌ UPGRADE FAILED!\nYou lost ${bet}`,
                 invalidInput: "Enter valid bet and target!",
                 serverError: "Server connection error!",
-                linkLoading: "Link is loading..."
+                linkLoading: "Link is loading...",
+                authError: "Please open this app inside Telegram!"
             }
         };
 
@@ -595,8 +597,26 @@
         let isSpinning = false;
         let userRefLink = "";
         let userStreakDays = 0;
-        
         let currentRotation = 0;
+
+        function notify(text) {
+            if (tg && tg.showAlert) tg.showAlert(text);
+            else alert(text);
+        }
+
+        // БЕЗОПАСНОЕ ПОЛУЧЕНИЕ ИНИЦИАЛИЗАЦИОННЫХ ДАННЫХ TELEGRAM
+        function getInitData() {
+            const initData = window.Telegram?.WebApp?.initData;
+            if (!initData) {
+                notify(i18n[currentLang].authError);
+                return null;
+            }
+            return initData;
+        }
+
+        function getUserIdForBitlabs() {
+            return tg?.initDataUnsafe?.user?.id || 'guest_user';
+        }
 
         function applyLanguage() {
             const t = i18n[currentLang];
@@ -649,22 +669,8 @@
             applyLanguage();
         }
 
-        function notify(text) {
-            if (tg && tg.showAlert) tg.showAlert(text);
-            else alert(text);
-        }
-
-        function getUserId() {
-            let id = tg?.initDataUnsafe?.user?.id;
-            if (!id) {
-                id = localStorage.getItem('guest_uid') || 'guest_' + Math.floor(Math.random() * 1000000);
-                localStorage.setItem('guest_uid', id);
-            }
-            return id;
-        }
-
         function getBitlabsUrl() {
-            const userId = getUserId();
+            const userId = getUserIdForBitlabs();
             const bitlabsToken = '780e236a-0cb6-488f-96cd-791cc00ecef6';
             return `https://web.bitlabs.ai/?token=${bitlabsToken}&uid=${userId}`;
         }
@@ -743,11 +749,14 @@
         }
 
         async function loadUserData() {
-            let userId = getUserId();
+            let initData = getInitData();
+            if (!initData) return;
 
             try {
-                let response = await fetch(`${SERVER_URL}/api/user?user_id=${userId}&lang=${currentLang}`, {
-                    headers: { "ngrok-skip-browser-warning": "true" }
+                let response = await fetch(`${SERVER_URL}/api/user`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
+                    body: JSON.stringify({ init_data: initData, lang: currentLang })
                 });
                 let result = await response.json();
 
@@ -758,8 +767,8 @@
                     
                     document.getElementById("ref-count-display").innerText = result.ref_count || 0;
                     
-                    if (result.bot_username) {
-                        userRefLink = `https://t.me/${result.bot_username}?start=${userId}`;
+                    if (result.bot_username && result.user_id) {
+                        userRefLink = `https://t.me/${result.bot_username}?start=${result.user_id}`;
                         document.getElementById("ref-link-input").value = userRefLink;
                     }
                 }
@@ -801,13 +810,14 @@
         }
 
         async function claimDailyDrop() {
-            let userId = getUserId();
+            let initData = getInitData();
+            if (!initData) return;
 
             try {
                 let response = await fetch(`${SERVER_URL}/api/claim`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
-                    body: JSON.stringify({ user_id: userId, lang: currentLang })
+                    body: JSON.stringify({ init_data: initData, lang: currentLang })
                 });
 
                 let result = await response.json();
@@ -825,7 +835,9 @@
         async function playUpgrade() {
             if (isSpinning) return;
             
-            let userId = getUserId();
+            let initData = getInitData();
+            if (!initData) return;
+
             let bet = parseInt(document.getElementById('bet-input').value) || 0;
             let target = parseInt(document.getElementById('target-input').value) || 0;
 
@@ -840,7 +852,7 @@
                 let response = await fetch(`${SERVER_URL}/api/upgrade`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
-                    body: JSON.stringify({ user_id: userId, bet: bet, target: target, lang: currentLang })
+                    body: JSON.stringify({ init_data: initData, bet: bet, target: target, lang: currentLang })
                 });
 
                 let result = await response.json();
@@ -850,15 +862,12 @@
                     let chance = (bet / target) * 90.0;
                     chance = Math.min(90.0, Math.max(1.0, chance));
                     
-                    // Переводим шансы в градусы выигрышной зоны
                     let winDegrees = chance * 3.6;
 
-                    // Выбираем случайную точку для остановки стрелки (исправлено result.won на result.is_win)
                     let stopAngle = result.is_win 
                         ? (Math.random() * (winDegrees - 8) + 4) 
                         : (Math.random() * (360 - winDegrees - 16) + winDegrees + 8); 
 
-                    // Крутим колесо на 5 полных оборотов + новый угол с учетом накопленного значения (currentRotation)
                     let spins = 5 * 360;
                     currentRotation += spins + (stopAngle - (currentRotation % 360) + 360) % 360;
 
@@ -866,7 +875,6 @@
 
                     setTimeout(() => {
                         document.getElementById("balance").innerText = result.new_balance;
-                        // Исправлено result.won на result.is_win
                         let popMsg = i18n[currentLang].winMsg(result.is_win, bet, target);
                         notify(popMsg);
                         
@@ -886,12 +894,14 @@
         }
 
         async function withdrawReward(item, price) {
-            let userId = getUserId();
+            let initData = getInitData();
+            if (!initData) return;
+
             try {
                 let response = await fetch(`${SERVER_URL}/api/withdraw`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
-                    body: JSON.stringify({ user_id: userId, item: item, price: price, lang: currentLang })
+                    body: JSON.stringify({ init_data: initData, item: item, price: price, lang: currentLang })
                 });
                 let result = await response.json();
                 if (result.success) {
