@@ -7,6 +7,7 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
         const SERVER_URL = "https://swan-prissy-poking.ngrok-free.dev";
+        const TIMEWALL_WIDGET_ID = "YOUR_TIMEWALL_WIDGET_ID"; // Подставьте ваш ID из TimeWall
         const tg = window.Telegram?.WebApp;
         
         tg?.expand?.();
@@ -186,14 +187,14 @@
             text-shadow: 0 0 5px rgba(57, 255, 20, 0.4);
         }
 
-        .mult-btns {
+        .mult-btns, .provider-btns {
             display: flex;
             justify-content: space-between;
             gap: 6px;
             margin: 12px 0;
         }
 
-        .mult-btn {
+        .mult-btn, .provider-btn {
             flex: 1;
             background: #000;
             border: 1px solid rgba(57, 255, 20, 0.3);
@@ -206,7 +207,7 @@
             transition: all 0.2s;
         }
 
-        .mult-btn.active {
+        .mult-btn.active, .provider-btn.active {
             background: var(--accent-neon);
             color: #000;
             box-shadow: 0 0 10px rgba(57, 255, 20, 0.5);
@@ -334,7 +335,7 @@
 
         .tab-content.active { display: flex; }
 
-        .bitlabs-frame {
+        .task-frame {
             width: 100%;
             height: 480px;
             border: 1px solid rgba(57, 255, 20, 0.2);
@@ -342,6 +343,9 @@
             background: #fff;
             margin-top: 10px;
         }
+
+        .task-provider-section { display: none; }
+        .task-provider-section.active { display: block; }
     </style>
 </head>
 <body>
@@ -362,17 +366,39 @@
         </div>
     </div>
 
-    <!-- Вкладка 2: Задания (Bitlabs) -->
+    <!-- Вкладка 2: Задания (Bitlabs & TimeWall) -->
     <div id="tab-tasks" class="tab-content">
-        <div class="section-title" id="t-tasks-title">📋 Заработок на опросах</div>
-        <div class="card" style="padding: 16px;">
-            <div style="font-size: 32px; margin-bottom: 6px;">📊</div>
-            <div style="font-size: 16px; font-weight: bold; margin-bottom: 4px;" id="t-tasks-heading">Платные опросы Bitlabs</div>
-            <div class="subtitle" style="margin-bottom: 12px;" id="t-tasks-desc">Пройди доступные опросы и получи монеты прямо на баланс SteamDrop!</div>
-            
-            <iframe id="bitlabs-iframe" class="bitlabs-frame" src="about:blank" allow="geolocation"></iframe>
+        <div class="section-title" id="t-tasks-title">📋 Заработок на заданиях</div>
+        
+        <div class="provider-btns">
+            <button class="provider-btn active" onclick="switchTaskProvider('bitlabs', this)">📊 Bitlabs</button>
+            <button class="provider-btn" onclick="switchTaskProvider('timewall', this)">👀 TimeWall</button>
+        </div>
 
-            <button class="btn-upgrade" style="margin-top: 12px;" onclick="openBitlabsBrowser()" id="t-tasks-btn">🌐 ОТКРЫТЬ ВО ВНЕШНЕМ БРАУЗЕРЕ</button>
+        <!-- Секция BitLabs -->
+        <div id="provider-bitlabs" class="task-provider-section active">
+            <div class="card" style="padding: 16px;">
+                <div style="font-size: 32px; margin-bottom: 6px;">📊</div>
+                <div style="font-size: 16px; font-weight: bold; margin-bottom: 4px;" id="t-tasks-heading">Платные опросы Bitlabs</div>
+                <div class="subtitle" style="margin-bottom: 12px;" id="t-tasks-desc">Пройди доступные опросы и получи монеты прямо на баланс SteamDrop!</div>
+                
+                <iframe id="bitlabs-iframe" class="task-frame" src="about:blank" allow="geolocation"></iframe>
+
+                <button class="btn-upgrade" style="margin-top: 12px;" onclick="openBitlabsBrowser()" id="t-tasks-btn">🌐 ОТКРЫТЬ ВО ВНЕШНЕМ БРАУЗЕРЕ</button>
+            </div>
+        </div>
+
+        <!-- Секция TimeWall -->
+        <div id="provider-timewall" class="task-provider-section">
+            <div class="card" style="padding: 16px;">
+                <div style="font-size: 32px; margin-bottom: 6px;">👀</div>
+                <div style="font-size: 16px; font-weight: bold; margin-bottom: 4px;" id="t-timewall-heading">Микрозадания TimeWall</div>
+                <div class="subtitle" style="margin-bottom: 12px;" id="t-timewall-desc">Смотри сайты, подписывайся на каналы и выполняй простая задания!</div>
+                
+                <iframe id="timewall-iframe" class="task-frame" src="about:blank" allow="geolocation"></iframe>
+
+                <button class="btn-upgrade" style="margin-top: 12px;" onclick="openTimeWallBrowser()" id="t-timewall-btn">🌐 ОТКРЫТЬ ВО ВНЕШНЕМ БРАУЗЕРЕ</button>
+            </div>
         </div>
     </div>
 
@@ -517,10 +543,13 @@
                 dailyTitle: "⚡ Ежедневный Бонус",
                 claimDrop: "Забрать Дроп",
                 navTasks: "Задания",
-                tasksTitle: "📋 Заработок на опросах",
+                tasksTitle: "📋 Заработок на заданиях",
                 tasksHeading: "Платные опросы Bitlabs",
                 tasksDesc: "Пройди доступные опросы и получи монеты прямо на баланс SteamDrop!",
                 tasksBtn: "🌐 ОТКРЫТЬ ВО ВНЕШНЕМ БРАУЗЕРЕ",
+                timewallHeading: "Микрозадания TimeWall",
+                timewallDesc: "Смотри сайты, подписывайся на каналы и выполняй простые задания!",
+                timewallBtn: "🌐 ОТКРЫТЬ ВО ВНЕШНЕМ БРАУЗЕРЕ",
                 upgradeTitle: "⚡ Апгрейдер Баланса",
                 chanceLabel: "Шанс",
                 betLabel: "Ставка",
@@ -556,10 +585,13 @@
                 dailyTitle: "⚡ Daily Bonus",
                 claimDrop: "Claim Drop",
                 navTasks: "Tasks",
-                tasksTitle: "📋 Earn by Surveys",
+                tasksTitle: "📋 Earn by Tasks",
                 tasksHeading: "Bitlabs Paid Surveys",
                 tasksDesc: "Complete available surveys and get coins directly to your SteamDrop balance!",
                 tasksBtn: "🌐 OPEN IN EXTERNAL BROWSER",
+                timewallHeading: "TimeWall Tasks",
+                timewallDesc: "View websites, subscribe to channels, and complete simple tasks!",
+                timewallBtn: "🌐 OPEN IN EXTERNAL BROWSER",
                 upgradeTitle: "⚡ Balance Upgrader",
                 chanceLabel: "Chance",
                 betLabel: "Bet",
@@ -613,7 +645,7 @@
             return initData;
         }
 
-        function getUserIdForBitlabs() {
+        function getUserIdForTasks() {
             return tg?.initDataUnsafe?.user?.id || 'guest_user';
         }
 
@@ -630,6 +662,10 @@
             document.getElementById('t-tasks-heading').innerText = t.tasksHeading;
             document.getElementById('t-tasks-desc').innerText = t.tasksDesc;
             document.getElementById('t-tasks-btn').innerText = t.tasksBtn;
+
+            document.getElementById('t-timewall-heading').innerText = t.timewallHeading;
+            document.getElementById('t-timewall-desc').innerText = t.timewallDesc;
+            document.getElementById('t-timewall-btn').innerText = t.timewallBtn;
 
             document.getElementById('t-upgrade-title').innerText = t.upgradeTitle;
             document.getElementById('t-chance-label').innerText = t.chanceLabel;
@@ -669,15 +705,27 @@
         }
 
         function getBitlabsUrl() {
-            const userId = getUserIdForBitlabs();
+            const userId = getUserIdForTasks();
             const bitlabsToken = '780e236a-0cb6-488f-96cd-791cc00ecef6';
             return `https://web.bitlabs.ai/?token=${bitlabsToken}&uid=${userId}`;
+        }
+
+        function getTimeWallUrl() {
+            const userId = getUserIdForTasks();
+            return `https://timewall.io/offers/widget/${TIMEWALL_WIDGET_ID}?user_id=${userId}`;
         }
 
         function loadBitlabsIframe() {
             const iframe = document.getElementById('bitlabs-iframe');
             if (iframe && iframe.src === "about:blank") {
                 iframe.src = getBitlabsUrl();
+            }
+        }
+
+        function loadTimeWallIframe() {
+            const iframe = document.getElementById('timewall-iframe');
+            if (iframe && iframe.src === "about:blank") {
+                iframe.src = getTimeWallUrl();
             }
         }
 
@@ -688,6 +736,26 @@
             } else {
                 window.open(bitlabsUrl, '_blank');
             }
+        }
+
+        function openTimeWallBrowser() {
+            const timewallUrl = getTimeWallUrl();
+            if (tg && tg.openLink) {
+                tg.openLink(timewallUrl);
+            } else {
+                window.open(timewallUrl, '_blank');
+            }
+        }
+
+        function switchTaskProvider(provider, el) {
+            document.querySelectorAll('.provider-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.task-provider-section').forEach(s => s.classList.remove('active'));
+            
+            el.classList.add('active');
+            document.getElementById(`provider-${provider}`).classList.add('active');
+
+            if (provider === 'bitlabs') loadBitlabsIframe();
+            if (provider === 'timewall') loadTimeWallIframe();
         }
 
         function switchTab(tabName, el) {
