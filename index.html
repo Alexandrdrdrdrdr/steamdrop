@@ -111,6 +111,44 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.5);
         }
 
+        /* --- SWITCHER ДЛЯ ИГР В ОДНОМ ОКНЕ --- */
+        .game-switcher {
+            display: flex;
+            background: #000;
+            border: 1px solid rgba(57, 255, 20, 0.3);
+            border-radius: 10px;
+            padding: 4px;
+            margin-bottom: 14px;
+            gap: 4px;
+        }
+
+        .game-switcher-btn {
+            flex: 1;
+            padding: 8px 0;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .game-switcher-btn.active {
+            background: var(--accent-neon);
+            color: #000;
+            box-shadow: 0 0 10px rgba(57, 255, 20, 0.5);
+        }
+
+        .game-mode-panel {
+            display: none;
+        }
+
+        .game-mode-panel.active {
+            display: block;
+        }
+
         .wheel-container {
             position: relative;
             width: 180px;
@@ -348,17 +386,18 @@
         .task-provider-section { display: none; }
         .task-provider-section.active { display: block; }
 
-        /* --- PLINKO BOARD --- */
+        /* --- PLINKO BOARD (ОБНОВЛЕННЫЙ ДИЗАЙН) --- */
         .plinko-board-container {
             position: relative;
             width: 100%;
             max-width: 350px;
-            height: 340px;
+            height: 350px;
             margin: 0 auto 10px auto;
-            background: #000;
-            border-radius: 12px;
-            border: 1px solid rgba(57, 255, 20, 0.2);
+            background: radial-gradient(circle at center, #0a150a 0%, #000 100%);
+            border-radius: 16px;
+            border: 1px solid rgba(57, 255, 20, 0.3);
             overflow: hidden;
+            box-shadow: inset 0 0 20px rgba(57, 255, 20, 0.1);
         }
 
         #plinko-canvas {
@@ -369,31 +408,34 @@
 
         .plinko-slots {
             position: absolute;
-            bottom: 6px;
-            left: 0; right: 0;
+            bottom: 8px;
+            left: 6px; right: 6px;
             display: flex;
             justify-content: space-between;
-            padding: 0 4px;
+            gap: 3px;
         }
 
         .plinko-slot {
             flex: 1;
-            margin: 0 1px;
-            background: rgba(57, 255, 20, 0.1);
-            border: 1px solid var(--accent-neon);
-            border-radius: 4px;
+            background: linear-gradient(180deg, rgba(20, 40, 20, 0.9) 0%, rgba(5, 15, 5, 0.95) 100%);
+            border: 1px solid rgba(57, 255, 20, 0.5);
+            border-radius: 6px;
             font-size: 9px;
-            font-weight: bold;
+            font-weight: 800;
             color: var(--accent-neon);
-            padding: 4px 0;
+            padding: 6px 0;
             text-align: center;
-            transition: all 0.2s;
+            transition: all 0.15s ease-in-out;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
 
         .plinko-slot.highlight {
             background: var(--accent-neon);
             color: #000;
-            box-shadow: 0 0 12px var(--accent-neon);
+            box-shadow: 0 0 15px var(--accent-neon);
+            transform: scale(1.15);
+            border-color: #fff;
+            z-index: 5;
         }
     </style>
 </head>
@@ -449,69 +491,75 @@
         </div>
     </div>
 
-    <!-- Вкладка 3: Апгрейдер -->
-    <div id="tab-upgrade" class="tab-content">
-        <div class="section-title" id="t-upgrade-title">⚡ Апгрейдер Баланса</div>
+    <!-- Вкладка 3: Игры (Апгрейдер + Plinko) -->
+    <div id="tab-games" class="tab-content">
+        <div class="section-title" id="t-games-title">🎰 Игровой Раздел</div>
         <div class="card">
-            <div class="wheel-container">
-                <div class="wheel-ring" id="wheel-ring"></div>
-                <div class="wheel-arrow" id="wheel-arrow"></div>
-                <div class="wheel-inner">
-                    <span style="font-size: 11px; color: var(--text-muted);" id="t-chance-label">Шанс</span>
-                    <span id="chance-display" style="font-size: 22px; font-weight: 800; color: #fff; text-shadow: 0 0 8px var(--accent-neon);">45%</span>
-                </div>
+            <!-- Переключатель между играми -->
+            <div class="game-switcher">
+                <button class="game-switcher-btn active" id="btn-mode-plinko" onclick="switchGameMode('plinko')">⚪ Plinko</button>
+                <button class="game-switcher-btn" id="btn-mode-upgrade" onclick="switchGameMode('upgrade')">⚡ Upgrader</button>
             </div>
 
-            <div class="mult-btns">
-                <button class="mult-btn active" onclick="setMultiplier(1.5, this)">x1.5</button>
-                <button class="mult-btn" onclick="setMultiplier(2.0, this)">x2.0</button>
-                <button class="mult-btn" onclick="setMultiplier(5.0, this)">x5.0</button>
-                <button class="mult-btn" onclick="setMultiplier(10.0, this)">x10.0</button>
+            <!-- Режим Plinko -->
+            <div id="mode-plinko" class="game-mode-panel active">
+                <div class="plinko-board-container" id="plinko-board">
+                    <canvas id="plinko-canvas" width="350" height="350"></canvas>
+                    <div class="plinko-slots">
+                        <div class="plinko-slot" id="p-slot-0">x5.0</div>
+                        <div class="plinko-slot" id="p-slot-1">x2.0</div>
+                        <div class="plinko-slot" id="p-slot-2">x1.2</div>
+                        <div class="plinko-slot" id="p-slot-3">x0.5</div>
+                        <div class="plinko-slot" id="p-slot-4">x0.2</div>
+                        <div class="plinko-slot" id="p-slot-5">x0.5</div>
+                        <div class="plinko-slot" id="p-slot-6">x1.2</div>
+                        <div class="plinko-slot" id="p-slot-7">x2.0</div>
+                        <div class="plinko-slot" id="p-slot-8">x5.0</div>
+                    </div>
+                </div>
+
+                <div class="upgrader-inputs" style="margin-bottom: 12px;">
+                    <div class="input-box" style="grid-column: span 2;">
+                        <label id="t-plinko-bet-label">Ставка на 1 шар (мин. 10 💎)</label>
+                        <input type="number" id="plinko-bet-input" value="10" min="10">
+                    </div>
+                </div>
+
+                <button class="btn-upgrade" id="plinko-btn" onclick="playPlinko()">⚪ БРОСИТЬ ШАР</button>
             </div>
 
-            <div class="upgrader-inputs">
-                <div class="input-box">
-                    <label id="t-bet-label">Ставка</label>
-                    <input type="number" id="bet-input" value="100" oninput="updateCalculations()">
+            <!-- Режим Upgrader -->
+            <div id="mode-upgrade" class="game-mode-panel">
+                <div class="wheel-container">
+                    <div class="wheel-ring" id="wheel-ring"></div>
+                    <div class="wheel-arrow" id="wheel-arrow"></div>
+                    <div class="wheel-inner">
+                        <span style="font-size: 11px; color: var(--text-muted);" id="t-chance-label">Шанс</span>
+                        <span id="chance-display" style="font-size: 22px; font-weight: 800; color: #fff; text-shadow: 0 0 8px var(--accent-neon);">45%</span>
+                    </div>
                 </div>
-                <div class="input-box">
-                    <label id="t-win-label">Выиграешь</label>
-                    <input type="number" id="target-input" value="150" oninput="updateCalculationsFromTarget()">
+
+                <div class="mult-btns">
+                    <button class="mult-btn active" onclick="setMultiplier(1.5, this)">x1.5</button>
+                    <button class="mult-btn" onclick="setMultiplier(2.0, this)">x2.0</button>
+                    <button class="mult-btn" onclick="setMultiplier(5.0, this)">x5.0</button>
+                    <button class="mult-btn" onclick="setMultiplier(10.0, this)">x10.0</button>
                 </div>
+
+                <div class="upgrader-inputs">
+                    <div class="input-box">
+                        <label id="t-bet-label">Ставка</label>
+                        <input type="number" id="bet-input" value="100" oninput="updateCalculations()">
+                    </div>
+                    <div class="input-box">
+                        <label id="t-win-label">Выиграешь</label>
+                        <input type="number" id="target-input" value="150" oninput="updateCalculationsFromTarget()">
+                    </div>
+                </div>
+
+                <br>
+                <button class="btn-upgrade" id="upgrade-btn" onclick="playUpgrade()">🚀 ПРОКАЧАТЬ</button>
             </div>
-
-            <br>
-            <button class="btn-upgrade" id="upgrade-btn" onclick="playUpgrade()">🚀 ПРОКАЧАТЬ</button>
-        </div>
-    </div>
-
-    <!-- Вкладка Plinko -->
-    <div id="tab-plinko" class="tab-content">
-        <div class="section-title" id="t-plinko-title">⚪ Plinko Игра</div>
-        <div class="card">
-            <div class="plinko-board-container" id="plinko-board">
-                <canvas id="plinko-canvas" width="350" height="340"></canvas>
-                <div class="plinko-slots">
-                    <div class="plinko-slot" id="p-slot-0">x5.0</div>
-                    <div class="plinko-slot" id="p-slot-1">x2.0</div>
-                    <div class="plinko-slot" id="p-slot-2">x1.2</div>
-                    <div class="plinko-slot" id="p-slot-3">x0.5</div>
-                    <div class="plinko-slot" id="p-slot-4">x0.2</div>
-                    <div class="plinko-slot" id="p-slot-5">x0.5</div>
-                    <div class="plinko-slot" id="p-slot-6">x1.2</div>
-                    <div class="plinko-slot" id="p-slot-7">x2.0</div>
-                    <div class="plinko-slot" id="p-slot-8">x5.0</div>
-                </div>
-            </div>
-
-            <div class="upgrader-inputs" style="margin-bottom: 12px;">
-                <div class="input-box" style="grid-column: span 2;">
-                    <label id="t-plinko-bet-label">Ставка на 1 шар (мин. 10 💎)</label>
-                    <input type="number" id="plinko-bet-input" value="10" min="10">
-                </div>
-            </div>
-
-            <button class="btn-upgrade" id="plinko-btn" onclick="playPlinko()">⚪ БРОСИТЬ ШАР</button>
         </div>
     </div>
 
@@ -587,13 +635,9 @@
             <div class="nav-icon">📋</div>
             <span id="t-nav-tasks">Задания</span>
         </div>
-        <div class="nav-item" onclick="switchTab('upgrade', this)">
-            <div class="nav-icon">⚡</div>
-            <span id="t-nav-upgrade">Апгрейдер</span>
-        </div>
-        <div class="nav-item" onclick="switchTab('plinko', this)">
-            <div class="nav-icon">⚪</div>
-            <span id="t-nav-plinko">Plinko</span>
+        <div class="nav-item" onclick="switchTab('games', this)">
+            <div class="nav-icon">🎰</div>
+            <span id="t-nav-games">Игры</span>
         </div>
         <div class="nav-item" onclick="switchTab('refs', this)">
             <div class="nav-icon">👥</div>
@@ -619,13 +663,12 @@
                 timewallHeading: "Микрозадания TimeWall",
                 timewallDesc: "Смотри сайты, подписывайся на каналы и выполняй простые задания!",
                 timewallBtn: "🌐 ОТКРЫТЬ ВО ВНЕШНЕМ БРАУЗЕРЕ",
-                upgradeTitle: "⚡ Апгрейдер Баланса",
+                gamesTitle: "🎰 Игровой Раздел",
                 chanceLabel: "Шанс",
                 betLabel: "Ставка",
                 winLabel: "Выиграешь",
                 upgradeBtn: "🚀 ПРОКАЧАТЬ",
                 upgradeSpinning: "ВРАЩЕНИЕ...",
-                plinkoTitle: "⚪ Plinko Игра",
                 plinkoBetLabel: "Ставка на 1 шар (мин. 10 💎)",
                 plinkoBtn: "⚪ БРОСИТЬ ШАР",
                 refsTitle: "👥 Реферальная система",
@@ -636,8 +679,7 @@
                 shareRef: "✉️ ОТПРАВИТЬ ДРУГУ",
                 withdrawTitle: "🎁 Забрать Награду",
                 navMain: "Главная",
-                navUpgrade: "Апгрейдер",
-                navPlinko: "Plinko",
+                navGames: "Игры",
                 navRefs: "Друзья",
                 navWithdraw: "Вывод",
                 streakPrefix: "Стрик:",
@@ -665,13 +707,12 @@
                 timewallHeading: "TimeWall Tasks",
                 timewallDesc: "View websites, subscribe to channels, and complete simple tasks!",
                 timewallBtn: "🌐 OPEN IN EXTERNAL BROWSER",
-                upgradeTitle: "⚡ Balance Upgrader",
+                gamesTitle: "🎰 Gaming Section",
                 chanceLabel: "Chance",
                 betLabel: "Bet",
                 winLabel: "You Win",
                 upgradeBtn: "🚀 UPGRADE",
                 upgradeSpinning: "SPINNING...",
-                plinkoTitle: "⚪ Plinko Game",
                 plinkoBetLabel: "Bet per ball (min. 10 💎)",
                 plinkoBtn: "⚪ DROP BALL",
                 refsTitle: "👥 Referral System",
@@ -682,8 +723,7 @@
                 shareRef: "✉️ SHARE WITH FRIEND",
                 withdrawTitle: "🎁 Claim Reward",
                 navMain: "Home",
-                navUpgrade: "Upgrader",
-                navPlinko: "Plinko",
+                navGames: "Games",
                 navRefs: "Friends",
                 navWithdraw: "Withdraw",
                 streakPrefix: "Streak:",
@@ -744,13 +784,12 @@
             document.getElementById('t-timewall-desc').innerText = t.timewallDesc;
             document.getElementById('t-timewall-btn').innerText = t.timewallBtn;
 
-            document.getElementById('t-upgrade-title').innerText = t.upgradeTitle;
+            document.getElementById('t-games-title').innerText = t.gamesTitle;
             document.getElementById('t-chance-label').innerText = t.chanceLabel;
             document.getElementById('t-bet-label').innerText = t.betLabel;
             document.getElementById('t-win-label').innerText = t.winLabel;
             if (!isSpinning) document.getElementById('upgrade-btn').innerText = t.upgradeBtn;
             
-            document.getElementById('t-plinko-title').innerText = t.plinkoTitle;
             document.getElementById('t-plinko-bet-label').innerText = t.plinkoBetLabel;
             document.getElementById('plinko-btn').innerText = t.plinkoBtn;
 
@@ -764,8 +803,7 @@
             document.getElementById('t-withdraw-title').innerText = t.withdrawTitle;
             
             document.getElementById('t-nav-main').innerText = t.navMain;
-            document.getElementById('t-nav-upgrade').innerText = t.navUpgrade;
-            document.getElementById('t-nav-plinko').innerText = t.navPlinko;
+            document.getElementById('t-nav-games').innerText = t.navGames;
             document.getElementById('t-nav-refs').innerText = t.navRefs;
             document.getElementById('t-nav-withdraw').innerText = t.navWithdraw;
 
@@ -849,7 +887,19 @@
             if (tabName === 'tasks') {
                 loadBitlabsIframe();
             }
-            if (tabName === 'plinko') {
+            if (tabName === 'games') {
+                initPlinkoCanvas();
+            }
+        }
+
+        function switchGameMode(mode) {
+            document.querySelectorAll('.game-switcher-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.game-mode-panel').forEach(p => p.classList.remove('active'));
+
+            document.getElementById(`btn-mode-${mode}`).classList.add('active');
+            document.getElementById(`mode-${mode}`).classList.add('active');
+
+            if (mode === 'plinko') {
                 initPlinkoCanvas();
             }
         }
@@ -1045,7 +1095,7 @@
             }
         }
 
-        /* --- PLINKO ДВИЖОК ДЛЯ СПАМА С РАВНОМЕРНОЙ АНИМАЦИЕЙ --- */
+        /* --- PLINKO ENGINE --- */
         let plinkoCanvas, plinkoCtx;
         let pins = [];
         let activeBalls = [];
@@ -1058,7 +1108,7 @@
 
             pins = [];
             const rows = 8;
-            const startY = 30;
+            const startY = 35;
             const rowGap = 32;
 
             for (let r = 0; r < rows; r++) {
@@ -1079,7 +1129,7 @@
 
         function drawPlinkoBoard() {
             if (!plinkoCtx) return;
-            plinkoCtx.clearRect(0, 0, 350, 340);
+            plinkoCtx.clearRect(0, 0, 350, 350);
 
             // Штырьки
             plinkoCtx.fillStyle = '#39ff14';
@@ -1092,7 +1142,7 @@
                 plinkoCtx.fill();
             });
 
-            // Все активные шарики
+            // Шарики
             activeBalls.forEach(ball => {
                 plinkoCtx.fillStyle = '#ffffff';
                 plinkoCtx.shadowColor = '#ffffff';
@@ -1114,6 +1164,13 @@
                 return notify(currentLang === 'ru' ? "Минимальная ставка 10 💎!" : "Minimum bet is 10 💎!");
             }
 
+            // Списываем только визуально ставку перед выпуском
+            let currentBal = parseInt(document.getElementById("balance").innerText) || 0;
+            if (currentBal < bet) {
+                return notify(currentLang === 'ru' ? "Недостаточно 💎!" : "Not enough 💎!");
+            }
+            document.getElementById("balance").innerText = currentBal - bet;
+
             try {
                 let response = await fetch(`${SERVER_URL}/api/plinko`, {
                     method: "POST",
@@ -1130,20 +1187,20 @@
                 if (result.success) {
                     let targetIndex = typeof result.win_index !== 'undefined' ? result.win_index : (result.win_indices ? result.win_indices[0] : 4);
                     
-                    // Обновляем баланс сразу
-                    document.getElementById("balance").innerText = result.new_balance;
-                    
-                    // Запускаем физику отдельного шара
-                    spawnBall(targetIndex);
+                    // Передаём новый баланс серверного ответа прямо в объект шарика!
+                    spawnBall(targetIndex, result.new_balance);
                 } else {
+                    // В случае ошибки возвращаем баланс назад
+                    document.getElementById("balance").innerText = currentBal;
                     notify(result.message);
                 }
             } catch (e) {
+                document.getElementById("balance").innerText = currentBal;
                 notify(i18n[currentLang].serverError);
             }
         }
 
-        function spawnBall(targetIndex) {
+        function spawnBall(targetIndex, newBalance) {
             const slotWidth = 350 / 9;
             const targetX = slotWidth * targetIndex + slotWidth / 2;
 
@@ -1155,6 +1212,7 @@
                 r: 5,
                 targetX: targetX,
                 targetIndex: targetIndex,
+                newBalance: newBalance,
                 isFinished: false
             });
 
@@ -1178,13 +1236,13 @@
                 ball.x += ball.vx;
                 ball.y += ball.vy;
 
-                // Направление к нужной лунке ближе к низу
+                // Мягкое направление к лунке снизу
                 if (ball.y > 220) {
                     const diff = ball.targetX - ball.x;
                     ball.vx += diff * 0.02;
                 }
 
-                // Столкновения со штырьками
+                // Столкновение со штырьками
                 pins.forEach(pin => {
                     let dx = ball.x - pin.x;
                     let dy = ball.y - pin.y;
@@ -1202,18 +1260,21 @@
                     }
                 });
 
-                // Достижение дна
-                if (ball.y >= 300) {
+                // Касание дна (ПОПАДАНИЕ В ЧИСЛО)
+                if (ball.y >= 310) {
                     ball.isFinished = true;
+
+                    // ОБНОВЛЯЕМ БАЛАНС СТРОГО В МОМЕНТ УПАДАНИЯ ШАРИКА В ЛУНКУ
+                    document.getElementById("balance").innerText = ball.newBalance;
+
                     let targetSlot = document.getElementById(`p-slot-${ball.targetIndex}`);
                     if (targetSlot) {
                         targetSlot.classList.add('highlight');
-                        setTimeout(() => targetSlot.classList.remove('highlight'), 300);
+                        setTimeout(() => targetSlot.classList.remove('highlight'), 400);
                     }
                 }
             });
 
-            // Очищаем прилетевшие шарики
             activeBalls = activeBalls.filter(b => !b.isFinished);
             drawPlinkoBoard();
 
