@@ -7,7 +7,7 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
         const SERVER_URL = "https://swan-prissy-poking.ngrok-free.dev";
-        const TIMEWALL_WIDGET_ID = "YOUR_TIMEWALL_WIDGET_ID"; // Подставьте ваш ID из TimeWall
+        const TIMEWALL_WIDGET_ID = "YOUR_TIMEWALL_WIDGET_ID";
         const tg = window.Telegram?.WebApp;
         
         tg?.expand?.();
@@ -347,12 +347,12 @@
         .task-provider-section { display: none; }
         .task-provider-section.active { display: block; }
 
-        /* --- CТИЛИ ДЛЯ ИГРЫ PLINKO --- */
+        /* --- СТИЛИ ДЛЯ ИГРЫ PLINKO С CANVAS --- */
         .plinko-board-container {
             position: relative;
             width: 100%;
             max-width: 320px;
-            height: 260px;
+            height: 280px;
             margin: 0 auto 10px auto;
             background: #000;
             border-radius: 12px;
@@ -360,43 +360,10 @@
             overflow: hidden;
         }
 
-        .plinko-ball {
-            position: absolute;
-            width: 14px;
-            height: 14px;
-            background: #fff;
-            border-radius: 50%;
-            box-shadow: 0 0 10px #fff, 0 0 15px var(--accent-neon);
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10;
-            display: none;
-            transition: all 0.2s linear;
-        }
-
-        .plinko-pins {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-evenly;
-            height: 200px;
-            padding-top: 15px;
-        }
-
-        .plinko-row {
-            display: flex;
-            justify-content: center;
-            gap: 22px;
+        #plinko-canvas {
             width: 100%;
-        }
-
-        .plinko-pin {
-            width: 6px;
-            height: 6px;
-            background: var(--accent-neon);
-            border-radius: 50%;
-            box-shadow: 0 0 5px var(--accent-neon);
+            height: 100%;
+            display: block;
         }
 
         .plinko-slots {
@@ -524,24 +491,7 @@
         <div class="section-title" id="t-plinko-title">⚪ Plinko Игра</div>
         <div class="card">
             <div class="plinko-board-container" id="plinko-board">
-                <div class="plinko-ball" id="plinko-ball"></div>
-                <div class="plinko-pins">
-                    <div class="plinko-row">
-                        <div class="plinko-pin"></div><div class="plinko-pin"></div>
-                    </div>
-                    <div class="plinko-row">
-                        <div class="plinko-pin"></div><div class="plinko-pin"></div><div class="plinko-pin"></div>
-                    </div>
-                    <div class="plinko-row">
-                        <div class="plinko-pin"></div><div class="plinko-pin"></div><div class="plinko-pin"></div><div class="plinko-pin"></div>
-                    </div>
-                    <div class="plinko-row">
-                        <div class="plinko-pin"></div><div class="plinko-pin"></div><div class="plinko-pin"></div><div class="plinko-pin"></div><div class="plinko-pin"></div>
-                    </div>
-                    <div class="plinko-row">
-                        <div class="plinko-pin"></div><div class="plinko-pin"></div><div class="plinko-pin"></div><div class="plinko-pin"></div><div class="plinko-pin"></div><div class="plinko-pin"></div>
-                    </div>
-                </div>
+                <canvas id="plinko-canvas" width="320" height="280"></canvas>
                 <div class="plinko-slots">
                     <div class="plinko-slot" id="p-slot-0">x2.0</div>
                     <div class="plinko-slot" id="p-slot-1">x1.2</div>
@@ -913,6 +863,9 @@
             if (tabName === 'tasks') {
                 loadBitlabsIframe();
             }
+            if (tabName === 'plinko') {
+                initPlinkoCanvas();
+            }
         }
 
         function setMultiplier(mult, btn) {
@@ -1106,7 +1059,65 @@
             }
         }
 
-        /* --- ЛОГИКА АНИМАЦИИ И ЗАПРОСА PLINKO --- */
+        /* --- ФИЗИЧЕСКИЙ ДВИЖОК PLINKO (CANVAS) --- */
+        let plinkoCanvas, plinkoCtx;
+        let pins = [];
+        let activeBall = null;
+
+        function initPlinkoCanvas() {
+            plinkoCanvas = document.getElementById('plinko-canvas');
+            if (!plinkoCanvas) return;
+            plinkoCtx = plinkoCanvas.getContext('2d');
+
+            pins = [];
+            const rows = 6;
+            const startY = 35;
+            const rowGap = 32;
+
+            for (let r = 0; r < rows; r++) {
+                const count = r + 2;
+                const rowWidth = (count - 1) * 36;
+                const startX = (320 - rowWidth) / 2;
+
+                for (let c = 0; c < count; c++) {
+                    pins.push({
+                        x: startX + c * 36,
+                        y: startY + r * rowGap,
+                        r: 4
+                    });
+                }
+            }
+            drawPlinkoBoard();
+        }
+
+        function drawPlinkoBoard() {
+            if (!plinkoCtx) return;
+            plinkoCtx.clearRect(0, 0, 320, 280);
+
+            // Отрисовка штырьков
+            plinkoCtx.fillStyle = '#39ff14';
+            plinkoCtx.shadowColor = '#39ff14';
+            plinkoCtx.shadowBlur = 6;
+
+            pins.forEach(p => {
+                plinkoCtx.beginPath();
+                plinkoCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                plinkoCtx.fill();
+            });
+
+            // Отрисовка шарика
+            if (activeBall) {
+                plinkoCtx.fillStyle = '#ffffff';
+                plinkoCtx.shadowColor = '#ffffff';
+                plinkoCtx.shadowBlur = 12;
+                plinkoCtx.beginPath();
+                plinkoCtx.arc(activeBall.x, activeBall.y, activeBall.r, 0, Math.PI * 2);
+                plinkoCtx.fill();
+            }
+
+            plinkoCtx.shadowBlur = 0;
+        }
+
         async function playPlinko() {
             if (isPlinkoPlaying) return;
 
@@ -1120,8 +1131,6 @@
 
             isPlinkoPlaying = true;
             document.getElementById('plinko-btn').innerText = i18n[currentLang].plinkoDropping;
-
-            // Сброс всех подсветок лунок
             document.querySelectorAll('.plinko-slot').forEach(s => s.classList.remove('highlight'));
 
             try {
@@ -1133,42 +1142,12 @@
 
                 let result = await response.json();
                 if (result.success) {
-                    let ball = document.getElementById('plinko-ball');
-                    ball.style.display = 'block';
-
-                    // Траектория падающего шарика к выигрышному индексу
-                    let targetIndex = result.win_index; // 0..6
-                    let steps = [
-                        { top: 20, left: 50 },
-                        { top: 60, left: 45 + (Math.random() * 10 - 5) },
-                        { top: 100, left: 40 + (Math.random() * 20 - 10) },
-                        { top: 140, left: 35 + (Math.random() * 30 - 15) },
-                        { top: 180, left: 25 + (Math.random() * 50 - 25) },
-                        { top: 228, left: 10 + targetIndex * 13.3 + 6.5 }
-                    ];
-
-                    let currentStep = 0;
-                    let interval = setInterval(() => {
-                        if (currentStep < steps.length) {
-                            ball.style.top = steps[currentStep].top + 'px';
-                            ball.style.left = steps[currentStep].left + '%';
-                            currentStep++;
-                        } else {
-                            clearInterval(interval);
-                            
-                            // Подсветка выигранной лунки
-                            let targetSlot = document.getElementById(`p-slot-${targetIndex}`);
-                            if (targetSlot) targetSlot.classList.add('highlight');
-
-                            setTimeout(() => {
-                                ball.style.display = 'none';
-                                document.getElementById("balance").innerText = result.new_balance;
-                                notify(result.message);
-                                isPlinkoPlaying = false;
-                                applyLanguage();
-                            }, 500);
-                        }
-                    }, 250);
+                    runPhysicalBall(result.win_index, () => {
+                        document.getElementById("balance").innerText = result.new_balance;
+                        notify(result.message);
+                        isPlinkoPlaying = false;
+                        applyLanguage();
+                    });
                 } else {
                     notify(result.message);
                     isPlinkoPlaying = false;
@@ -1179,6 +1158,72 @@
                 isPlinkoPlaying = false;
                 applyLanguage();
             }
+        }
+
+        function runPhysicalBall(targetSlotIndex, onFinish) {
+            // Расчет целевой Х координаты для лунки (всего 7 лунок)
+            const targetX = 18 + targetSlotIndex * 42.5;
+
+            activeBall = {
+                x: 160 + (Math.random() * 6 - 3),
+                y: 10,
+                vx: (Math.random() - 0.5) * 0.5,
+                vy: 0.5,
+                r: 6
+            };
+
+            const gravity = 0.18;
+            const bounce = 0.45;
+            const friction = 0.98;
+
+            function update() {
+                activeBall.vy += gravity;
+                activeBall.vx *= friction;
+
+                activeBall.x += activeBall.vx;
+                activeBall.y += activeBall.vy;
+
+                // Направление к нужной лунке при приближении к низу
+                if (activeBall.y > 180) {
+                    const diff = targetX - activeBall.x;
+                    activeBall.vx += diff * 0.02;
+                }
+
+                // Столкновения со штырьками
+                pins.forEach(pin => {
+                    let dx = activeBall.x - pin.x;
+                    let dy = activeBall.y - pin.y;
+                    let dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < activeBall.r + pin.r) {
+                        let angle = Math.atan2(dy, dx);
+                        let speed = Math.sqrt(activeBall.vx * activeBall.vx + activeBall.vy * activeBall.vy);
+
+                        activeBall.vx = Math.cos(angle) * speed * bounce + (Math.random() - 0.5) * 0.4;
+                        activeBall.vy = Math.abs(Math.sin(angle) * speed * bounce);
+
+                        activeBall.x = pin.x + Math.cos(angle) * (activeBall.r + pin.r);
+                        activeBall.y = pin.y + Math.sin(angle) * (activeBall.r + pin.r);
+                    }
+                });
+
+                drawPlinkoBoard();
+
+                if (activeBall.y < 242) {
+                    requestAnimationFrame(update);
+                } else {
+                    // Долетел до лунки
+                    activeBall = null;
+                    drawPlinkoBoard();
+
+                    let targetSlot = document.getElementById(`p-slot-${targetSlotIndex}`);
+                    if (targetSlot) targetSlot.classList.add('highlight');
+
+                    if (onFinish) onFinish();
+                }
+            }
+
+            requestAnimationFrame(update);
         }
 
         async function withdrawReward(item, price) {
