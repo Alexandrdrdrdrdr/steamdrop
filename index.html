@@ -187,14 +187,14 @@
             text-shadow: 0 0 5px rgba(57, 255, 20, 0.4);
         }
 
-        .mult-btns, .provider-btns, .balls-btns {
+        .mult-btns, .provider-btns {
             display: flex;
             justify-content: space-between;
             gap: 6px;
             margin: 12px 0;
         }
 
-        .mult-btn, .provider-btn, .ball-count-btn {
+        .mult-btn, .provider-btn {
             flex: 1;
             background: #000;
             border: 1px solid rgba(57, 255, 20, 0.3);
@@ -207,7 +207,7 @@
             transition: all 0.2s;
         }
 
-        .mult-btn.active, .provider-btn.active, .ball-count-btn.active {
+        .mult-btn.active, .provider-btn.active {
             background: var(--accent-neon);
             color: #000;
             box-shadow: 0 0 10px rgba(57, 255, 20, 0.5);
@@ -225,12 +225,13 @@
             width: 100%;
             text-transform: uppercase;
             box-shadow: 0 0 10px rgba(57, 255, 20, 0.1);
-            transition: all 0.2s ease;
+            transition: all 0.1s ease;
         }
         
         .btn-upgrade:active, .btn-withdraw-action:active {
             background: var(--accent-neon);
             color: #000;
+            transform: scale(0.98);
         }
 
         .btn-withdraw-action { padding: 8px 14px; font-size: 13px; width: auto; }
@@ -347,7 +348,7 @@
         .task-provider-section { display: none; }
         .task-provider-section.active { display: block; }
 
-        /* --- УВЕЛИЧЕННАЯ ПЛОЩАДКА PLINKO С CANVAS --- */
+        /* --- PLINKO BOARD --- */
         .plinko-board-container {
             position: relative;
             width: 100%;
@@ -503,16 +504,9 @@
                 </div>
             </div>
 
-            <!-- Селектор кол-ва шаров -->
-            <div class="balls-btns">
-                <button class="ball-count-btn active" onclick="setBallCount(1, this)">1 Шарик</button>
-                <button class="ball-count-btn" onclick="setBallCount(5, this)">5 Шариков</button>
-                <button class="ball-count-btn" onclick="setBallCount(10, this)">10 Шариков</button>
-            </div>
-
             <div class="upgrader-inputs" style="margin-bottom: 12px;">
                 <div class="input-box" style="grid-column: span 2;">
-                    <label id="t-plinko-bet-label">Ставка на 1 шарик (мин. 10 💎)</label>
+                    <label id="t-plinko-bet-label">Ставка на 1 шар (мин. 10 💎)</label>
                     <input type="number" id="plinko-bet-input" value="10" min="10">
                 </div>
             </div>
@@ -634,7 +628,6 @@
                 plinkoTitle: "⚪ Plinko Игра",
                 plinkoBetLabel: "Ставка на 1 шар (мин. 10 💎)",
                 plinkoBtn: "⚪ БРОСИТЬ ШАР",
-                plinkoDropping: "ПАДЕНИЕ...",
                 refsTitle: "👥 Реферальная система",
                 refDesc: "Получай <b style='color: var(--accent-neon);'>+200 💎</b> за каждого друга, когда он наберет <b>500 💎</b>!",
                 friendsCount: "Приглашено друзей:",
@@ -681,7 +674,6 @@
                 plinkoTitle: "⚪ Plinko Game",
                 plinkoBetLabel: "Bet per ball (min. 10 💎)",
                 plinkoBtn: "⚪ DROP BALL",
-                plinkoDropping: "DROPPING...",
                 refsTitle: "👥 Referral System",
                 refDesc: "Get <b style='color: var(--accent-neon);'>+200 💎</b> for each friend who reaches <b>500 💎</b>!",
                 friendsCount: "Invited Friends:",
@@ -712,8 +704,6 @@
         let currentLang = localStorage.getItem('app_lang') || 'ru';
         let currentMultiplier = 1.5;
         let isSpinning = false;
-        let isPlinkoPlaying = false;
-        let selectedBallCount = 1;
         let userRefLink = "";
         let userStreakDays = 0;
         let currentRotation = 0;
@@ -762,7 +752,7 @@
             
             document.getElementById('t-plinko-title').innerText = t.plinkoTitle;
             document.getElementById('t-plinko-bet-label').innerText = t.plinkoBetLabel;
-            if (!isPlinkoPlaying) document.getElementById('plinko-btn').innerText = t.plinkoBtn;
+            document.getElementById('plinko-btn').innerText = t.plinkoBtn;
 
             document.getElementById('t-refs-title').innerText = t.refsTitle;
             document.getElementById('t-ref-desc').innerHTML = t.refDesc;
@@ -872,12 +862,6 @@
             let bet = parseInt(document.getElementById('bet-input').value) || 0;
             document.getElementById('target-input').value = Math.round(bet * mult);
             updateCalculations();
-        }
-
-        function setBallCount(count, btn) {
-            selectedBallCount = count;
-            document.querySelectorAll('.ball-count-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
         }
 
         function updateCalculations() {
@@ -1061,10 +1045,11 @@
             }
         }
 
-        /* --- УВЕЛИЧЕННЫЙ ФИЗИЧЕСКИЙ ДВИЖОК PLINKO C ПОДДЕРЖКОЙ МНОГОЧИСЛЕННЫХ ШАРОВ --- */
+        /* --- PLINKO ДВИЖОК ДЛЯ СПАМА С РАВНОМЕРНОЙ АНИМАЦИЕЙ --- */
         let plinkoCanvas, plinkoCtx;
         let pins = [];
         let activeBalls = [];
+        let isAnimationRunning = false;
 
         function initPlinkoCanvas() {
             plinkoCanvas = document.getElementById('plinko-canvas');
@@ -1096,7 +1081,7 @@
             if (!plinkoCtx) return;
             plinkoCtx.clearRect(0, 0, 350, 340);
 
-            // Отрисовка штырьков
+            // Штырьки
             plinkoCtx.fillStyle = '#39ff14';
             plinkoCtx.shadowColor = '#39ff14';
             plinkoCtx.shadowBlur = 6;
@@ -1107,7 +1092,7 @@
                 plinkoCtx.fill();
             });
 
-            // Отрисовка всех активных шариков
+            // Все активные шарики
             activeBalls.forEach(ball => {
                 plinkoCtx.fillStyle = '#ffffff';
                 plinkoCtx.shadowColor = '#ffffff';
@@ -1121,8 +1106,6 @@
         }
 
         async function playPlinko() {
-            if (isPlinkoPlaying) return;
-
             let initData = getInitData();
             if (!initData) return;
 
@@ -1131,10 +1114,6 @@
                 return notify(currentLang === 'ru' ? "Минимальная ставка 10 💎!" : "Minimum bet is 10 💎!");
             }
 
-            isPlinkoPlaying = true;
-            document.getElementById('plinko-btn').innerText = i18n[currentLang].plinkoDropping;
-            document.querySelectorAll('.plinko-slot').forEach(s => s.classList.remove('highlight'));
-
             try {
                 let response = await fetch(`${SERVER_URL}/api/plinko`, {
                     method: "POST",
@@ -1142,117 +1121,107 @@
                     body: JSON.stringify({ 
                         init_data: initData, 
                         bet: bet, 
-                        balls_count: selectedBallCount, 
+                        balls_count: 1, 
                         lang: currentLang 
                     })
                 });
 
                 let result = await response.json();
                 if (result.success) {
-                    let targets = Array.isArray(result.win_indices) ? result.win_indices : [result.win_index];
+                    let targetIndex = typeof result.win_index !== 'undefined' ? result.win_index : (result.win_indices ? result.win_indices[0] : 4);
                     
-                    runPhysicalBalls(targets, () => {
-                        document.getElementById("balance").innerText = result.new_balance;
-                        notify(result.message);
-                        isPlinkoPlaying = false;
-                        applyLanguage();
-                    });
+                    // Обновляем баланс сразу
+                    document.getElementById("balance").innerText = result.new_balance;
+                    
+                    // Запускаем физику отдельного шара
+                    spawnBall(targetIndex);
                 } else {
                     notify(result.message);
-                    isPlinkoPlaying = false;
-                    applyLanguage();
                 }
             } catch (e) {
                 notify(i18n[currentLang].serverError);
-                isPlinkoPlaying = false;
-                applyLanguage();
             }
         }
 
-        function runPhysicalBalls(targetIndices, onFinish) {
+        function spawnBall(targetIndex) {
             const slotWidth = 350 / 9;
-            activeBalls = [];
+            const targetX = slotWidth * targetIndex + slotWidth / 2;
 
-            // Создание и запуск шариков с небольшой задержкой вылета
-            targetIndices.forEach((targetIndex, index) => {
-                const targetX = slotWidth * targetIndex + slotWidth / 2;
-
-                setTimeout(() => {
-                    activeBalls.push({
-                        id: index,
-                        x: 175 + (Math.random() * 12 - 6),
-                        y: 10,
-                        vx: (Math.random() - 0.5) * 0.8,
-                        vy: 0.5,
-                        r: 5,
-                        targetX: targetX,
-                        targetIndex: targetIndex,
-                        isFinished: false
-                    });
-                }, index * 180);
+            activeBalls.push({
+                x: 175 + (Math.random() * 10 - 5),
+                y: 10,
+                vx: (Math.random() - 0.5) * 0.8,
+                vy: 0.5,
+                r: 5,
+                targetX: targetX,
+                targetIndex: targetIndex,
+                isFinished: false
             });
 
+            if (!isAnimationRunning) {
+                isAnimationRunning = true;
+                requestAnimationFrame(updatePlinkoAnimation);
+            }
+        }
+
+        function updatePlinkoAnimation() {
             const gravity = 0.18;
             const bounce = 0.45;
             const friction = 0.98;
 
-            function updateLoop() {
-                let hasActive = false;
+            activeBalls.forEach(ball => {
+                if (ball.isFinished) return;
 
-                activeBalls.forEach(ball => {
-                    if (ball.isFinished) return;
-                    hasActive = true;
+                ball.vy += gravity;
+                ball.vx *= friction;
 
-                    ball.vy += gravity;
-                    ball.vx *= friction;
+                ball.x += ball.vx;
+                ball.y += ball.vy;
 
-                    ball.x += ball.vx;
-                    ball.y += ball.vy;
+                // Направление к нужной лунке ближе к низу
+                if (ball.y > 220) {
+                    const diff = ball.targetX - ball.x;
+                    ball.vx += diff * 0.02;
+                }
 
-                    // Направление шарика к его целевой лунке ближе к основанию
-                    if (ball.y > 220) {
-                        const diff = ball.targetX - ball.x;
-                        ball.vx += diff * 0.02;
-                    }
+                // Столкновения со штырьками
+                pins.forEach(pin => {
+                    let dx = ball.x - pin.x;
+                    let dy = ball.y - pin.y;
+                    let dist = Math.sqrt(dx * dx + dy * dy);
 
-                    // Столкновения со штырьками
-                    pins.forEach(pin => {
-                        let dx = ball.x - pin.x;
-                        let dy = ball.y - pin.y;
-                        let dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < ball.r + pin.r) {
+                        let angle = Math.atan2(dy, dx);
+                        let speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
 
-                        if (dist < ball.r + pin.r) {
-                            let angle = Math.atan2(dy, dx);
-                            let speed = Math.sqrt(ball.vx * ball.vx + ball.vy * ball.vy);
+                        ball.vx = Math.cos(angle) * speed * bounce + (Math.random() - 0.5) * 0.4;
+                        ball.vy = Math.abs(Math.sin(angle) * speed * bounce);
 
-                            ball.vx = Math.cos(angle) * speed * bounce + (Math.random() - 0.5) * 0.4;
-                            ball.vy = Math.abs(Math.sin(angle) * speed * bounce);
-
-                            ball.x = pin.x + Math.cos(angle) * (ball.r + pin.r);
-                            ball.y = pin.y + Math.sin(angle) * (ball.r + pin.r);
-                        }
-                    });
-
-                    // Попадание в лунку
-                    if (ball.y >= 300) {
-                        ball.isFinished = true;
-                        let targetSlot = document.getElementById(`p-slot-${ball.targetIndex}`);
-                        if (targetSlot) targetSlot.classList.add('highlight');
+                        ball.x = pin.x + Math.cos(angle) * (ball.r + pin.r);
+                        ball.y = pin.y + Math.sin(angle) * (ball.r + pin.r);
                     }
                 });
 
-                // Удаляем упавшие шарики из отрисовки
-                activeBalls = activeBalls.filter(b => !b.isFinished);
-                drawPlinkoBoard();
-
-                if (hasActive || activeBalls.length > 0) {
-                    requestAnimationFrame(updateLoop);
-                } else {
-                    if (onFinish) onFinish();
+                // Достижение дна
+                if (ball.y >= 300) {
+                    ball.isFinished = true;
+                    let targetSlot = document.getElementById(`p-slot-${ball.targetIndex}`);
+                    if (targetSlot) {
+                        targetSlot.classList.add('highlight');
+                        setTimeout(() => targetSlot.classList.remove('highlight'), 300);
+                    }
                 }
-            }
+            });
 
-            requestAnimationFrame(updateLoop);
+            // Очищаем прилетевшие шарики
+            activeBalls = activeBalls.filter(b => !b.isFinished);
+            drawPlinkoBoard();
+
+            if (activeBalls.length > 0) {
+                requestAnimationFrame(updatePlinkoAnimation);
+            } else {
+                isAnimationRunning = false;
+            }
         }
 
         async function withdrawReward(item, price) {
