@@ -347,9 +347,9 @@
 <body>
     <div class="header">
         <button class="lang-btn" id="lang-toggle-btn" onclick="toggleLanguage()">🌐 EN</button>
-        <div class="title"> SteamDrop</div>
+        <div class="title">🎮 SteamDrop</div>
         <div class="subtitle" id="t-your-balance">Твой баланс:</div>
-        <div class="balance-box"><span id="balance">...</span> </div>
+        <div class="balance-box"><span id="balance">...</span> 💎</div>
     </div>
 
     <!-- Вкладка 1: Главная -->
@@ -362,7 +362,7 @@
         </div>
     </div>
 
-    <!-- Вкладка 2: Задания (Интеграция Bitlabs) -->
+    <!-- Вкладка 2: Задания (Bitlabs) -->
     <div id="tab-tasks" class="tab-content">
         <div class="section-title" id="t-tasks-title">📋 Заработок на опросах</div>
         <div class="card" style="padding: 16px;">
@@ -403,7 +403,7 @@
                 </div>
                 <div class="input-box">
                     <label id="t-win-label">Выиграешь</label>
-                    <input type="number" id="target-input" value="200" oninput="updateCalculationsFromTarget()">
+                    <input type="number" id="target-input" value="150" oninput="updateCalculationsFromTarget()">
                 </div>
             </div>
 
@@ -417,7 +417,7 @@
         <div class="section-title" id="t-refs-title">👥 Реферальная система</div>
         <div class="card">
             <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;" id="t-ref-desc">
-                Получай <b style="color: var(--accent-neon);">+200</b> за каждого друга, когда он наберет <b>500</b>!
+                Получай <b style="color: var(--accent-neon);">+200 💎</b> за каждого друга, когда он наберет <b>500 💎</b>!
             </div>
             <div style="margin: 16px 0; background: #050505; padding: 12px; border-radius: 8px; border: 1px solid rgba(57,255,20,0.2);">
                 <div style="font-size: 11px; color: var(--text-muted);" id="t-friends-count">Приглашено друзей:</div>
@@ -439,7 +439,7 @@
             <div class="withdraw-item">
                 <div class="withdraw-info">
                     <div class="withdraw-title">🎮 Steam Card $5</div>
-                    <div class="withdraw-price">5 000 </div>
+                    <div class="withdraw-price">5 000 💎</div>
                 </div>
                 <button class="btn-withdraw-action" onclick="withdrawReward('Steam Card $5', 5000)">ВЫВЕСТИ</button>
             </div>
@@ -449,7 +449,7 @@
                         🎮 Steam Card $10 
                         <span class="badge-discount">-5%</span>
                     </div>
-                    <div class="withdraw-price">9 500 </div>
+                    <div class="withdraw-price">9 500 💎</div>
                 </div>
                 <button class="btn-withdraw-action" onclick="withdrawReward('Steam Card $10', 9500)">ВЫВЕСТИ</button>
             </div>
@@ -459,7 +459,7 @@
                         🎮 Steam Card $25 
                         <span class="badge-discount">-8%</span>
                     </div>
-                    <div class="withdraw-price">23 000 </div>
+                    <div class="withdraw-price">23 000 💎</div>
                 </div>
                 <button class="btn-withdraw-action" onclick="withdrawReward('Steam Card $25', 23000)">ВЫВЕСТИ</button>
             </div>
@@ -469,7 +469,7 @@
                         🎮 Steam Card $50 
                         <span class="badge-discount">-12%</span>
                     </div>
-                    <div class="withdraw-price">44 000 </div>
+                    <div class="withdraw-price">44 000 💎</div>
                 </div>
                 <button class="btn-withdraw-action" onclick="withdrawReward('Steam Card $50', 44000)">ВЫВЕСТИ</button>
             </div>
@@ -479,7 +479,7 @@
                         🎮 Steam Card $100 
                         <span class="badge-discount">-15%</span>
                     </div>
-                    <div class="withdraw-price">85 000 </div>
+                    <div class="withdraw-price">85 000 💎</div>
                 </div>
                 <button class="btn-withdraw-action" onclick="withdrawReward('Steam Card $100', 85000)">ВЫВЕСТИ</button>
             </div>
@@ -528,7 +528,7 @@
                 upgradeBtn: "🚀 ПРОКАЧАТЬ",
                 upgradeSpinning: "ВРАЩЕНИЕ...",
                 refsTitle: "👥 Реферальная система",
-                refDesc: "Получай <b style='color: var(--accent-neon);'>+200</b> за каждого друга, когда он наберет <b>500</b>!",
+                refDesc: "Получай <b style='color: var(--accent-neon);'>+200 💎</b> за каждого друга, когда он наберет <b>500 💎</b>!",
                 friendsCount: "Приглашено друзей:",
                 yourLink: "Ваша ссылка:",
                 copyRef: "📋 КОПИРОВАТЬ ССЫЛКУ",
@@ -544,8 +544,8 @@
                 loading: "Загрузка...",
                 withdrawBtns: "ВЫВЕСТИ",
                 winMsg: (win, bet, target) => win 
-                    ? `🎉 УСПЕШНЫЙ АПГРЕЙД!\nВы выиграли ${target}` 
-                    : `❌ НЕУДАЧА!\nВы потеряли ${bet}`,
+                    ? `🎉 УСПЕШНЫЙ АПГРЕЙД!\nВы выиграли ${target} 💎` 
+                    : `❌ НЕУДАЧА!\nВы потеряли ${bet} 💎`,
                 invalidInput: "Укажите корректную ставку и цель!",
                 serverError: "Ошибка подключения к серверу!",
                 linkLoading: "Ссылка загружается...",
@@ -567,7 +567,7 @@
                 upgradeBtn: "🚀 UPGRADE",
                 upgradeSpinning: "SPINNING...",
                 refsTitle: "👥 Referral System",
-                refDesc: "Get <b style='color: var(--accent-neon);'>+200</b> for each friend who reaches <b>500</b>!",
+                refDesc: "Get <b style='color: var(--accent-neon);'>+200 💎</b> for each friend who reaches <b>500 💎</b>!",
                 friendsCount: "Invited Friends:",
                 yourLink: "Your Link:",
                 copyRef: "📋 COPY LINK",
@@ -583,8 +583,8 @@
                 loading: "Loading...",
                 withdrawBtns: "WITHDRAW",
                 winMsg: (win, bet, target) => win 
-                    ? `🎉 SUCCESSFUL UPGRADE!\nYou won ${target}` 
-                    : `❌ UPGRADE FAILED!\nYou lost ${bet}`,
+                    ? `🎉 SUCCESSFUL UPGRADE!\nYou won ${target} 💎` 
+                    : `❌ UPGRADE FAILED!\nYou lost ${bet} 💎`,
                 invalidInput: "Enter valid bet and target!",
                 serverError: "Server connection error!",
                 linkLoading: "Link is loading...",
@@ -604,7 +604,6 @@
             else alert(text);
         }
 
-        // БЕЗОПАСНОЕ ПОЛУЧЕНИЕ ИНИЦИАЛИЗАЦИОННЫХ ДАННЫХ TELEGRAM
         function getInitData() {
             const initData = window.Telegram?.WebApp?.initData;
             if (!initData) {
@@ -913,6 +912,7 @@
             }
         }
 
+        updateCalculations();
         loadUserData();
     </script>
 </body>
