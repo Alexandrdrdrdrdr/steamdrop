@@ -7,7 +7,6 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
         const SERVER_URL = "https://swan-prissy-poking.ngrok-free.dev";
-        const TIMEWALL_WIDGET_ID = "YOUR_TIMEWALL_WIDGET_ID";
         const tg = window.Telegram?.WebApp;
         
         tg?.expand?.();
@@ -371,24 +370,14 @@
     <div id="tab-tasks" class="tab-content">
         <div class="section-title" id="t-tasks-title">📋 Заработок на заданиях</div>
         
+        <!-- Поменяны местами: TimeWall на первом месте -->
         <div class="provider-btns">
-            <button class="provider-btn active" onclick="switchTaskProvider('bitlabs', this)">📊 Bitlabs</button>
-            <button class="provider-btn" onclick="switchTaskProvider('timewall', this)">👀 TimeWall</button>
+            <button class="provider-btn active" onclick="switchTaskProvider('timewall', this)">👀 TimeWall</button>
+            <button class="provider-btn" onclick="switchTaskProvider('bitlabs', this)">📊 Bitlabs</button>
         </div>
 
-        <div id="provider-bitlabs" class="task-provider-section active">
-            <div class="card" style="padding: 16px;">
-                <div style="font-size: 32px; margin-bottom: 6px;">📊</div>
-                <div style="font-size: 16px; font-weight: bold; margin-bottom: 4px;" id="t-tasks-heading">Платные опросы Bitlabs</div>
-                <div class="subtitle" style="margin-bottom: 12px;" id="t-tasks-desc">Пройди доступные опросы и получи монеты прямо на баланс SteamDrop!</div>
-                
-                <iframe id="bitlabs-iframe" class="task-frame" src="about:blank" allow="geolocation"></iframe>
-
-                <button class="btn-upgrade" style="margin-top: 12px;" onclick="openBitlabsBrowser()" id="t-tasks-btn">🌐 ОТКРЫТЬ ВО ВНЕШНЕМ БРАУЗЕРЕ</button>
-            </div>
-        </div>
-
-        <div id="provider-timewall" class="task-provider-section">
+        <!-- Раздел TimeWall -->
+        <div id="provider-timewall" class="task-provider-section active">
             <div class="card" style="padding: 16px;">
                 <div style="font-size: 32px; margin-bottom: 6px;">👀</div>
                 <div style="font-size: 16px; font-weight: bold; margin-bottom: 4px;" id="t-timewall-heading">Микрозадания TimeWall</div>
@@ -397,6 +386,19 @@
                 <iframe id="timewall-iframe" class="task-frame" src="about:blank" allow="geolocation"></iframe>
 
                 <button class="btn-upgrade" style="margin-top: 12px;" onclick="openTimeWallBrowser()" id="t-timewall-btn">🌐 ОТКРЫТЬ ВО ВНЕШНЕМ БРАУЗЕРЕ</button>
+            </div>
+        </div>
+
+        <!-- Раздел Bitlabs -->
+        <div id="provider-bitlabs" class="task-provider-section">
+            <div class="card" style="padding: 16px;">
+                <div style="font-size: 32px; margin-bottom: 6px;">📊</div>
+                <div style="font-size: 16px; font-weight: bold; margin-bottom: 4px;" id="t-tasks-heading">Платные опросы Bitlabs</div>
+                <div class="subtitle" style="margin-bottom: 12px;" id="t-tasks-desc">Пройди доступные опросы и получи монеты прямо на баланс SteamDrop!</div>
+                
+                <iframe id="bitlabs-iframe" class="task-frame" src="about:blank" allow="geolocation"></iframe>
+
+                <button class="btn-upgrade" style="margin-top: 12px;" onclick="openBitlabsBrowser()" id="t-tasks-btn">🌐 ОТКРЫТЬ ВО ВНЕШНЕМ БРАУЗЕРЕ</button>
             </div>
         </div>
     </div>
@@ -697,9 +699,10 @@
             return `https://web.bitlabs.ai/?token=${bitlabsToken}&uid=${userId}`;
         }
 
+        // Обновленная функция ссылки для TimeWall (из раздела Direct Link)
         function getTimeWallUrl() {
             const userId = getUserIdForTasks();
-            return `https://timewall.io/offers/widget/${TIMEWALL_WIDGET_ID}?user_id=${userId}`;
+            return `https://timewall.io/users/login?oid=f0310ac908b9ae82&uid=${userId}`;
         }
 
         function loadBitlabsIframe() {
@@ -751,8 +754,9 @@
             document.getElementById(`tab-${tabName}`).classList.add('active');
             el.classList.add('active');
 
+            // При переходе на вкладку "Задания" сразу загружается TimeWall
             if (tabName === 'tasks') {
-                loadBitlabsIframe();
+                loadTimeWallIframe();
             }
         }
 
