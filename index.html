@@ -7,8 +7,10 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
         const SERVER_URL = "https://swan-prissy-poking.ngrok-free.dev";
-        const tg = window.Telegram?.WebApp;
+        const TIMEWALL_PLACEMENT_ID = "f0310ac908b9ae82";
+        const BITLABS_TOKEN = "780e236a-0cb6-488f-96cd-791cc00ecef6";
         
+        const tg = window.Telegram?.WebApp;
         tg?.expand?.();
         tg?.ready?.();
     </script>
@@ -370,7 +372,6 @@
     <div id="tab-tasks" class="tab-content">
         <div class="section-title" id="t-tasks-title">📋 Заработок на заданиях</div>
         
-        <!-- Поменяны местами: TimeWall на первом месте -->
         <div class="provider-btns">
             <button class="provider-btn active" onclick="switchTaskProvider('timewall', this)">👀 TimeWall</button>
             <button class="provider-btn" onclick="switchTaskProvider('bitlabs', this)">📊 Bitlabs</button>
@@ -383,7 +384,7 @@
                 <div style="font-size: 16px; font-weight: bold; margin-bottom: 4px;" id="t-timewall-heading">Микрозадания TimeWall</div>
                 <div class="subtitle" style="margin-bottom: 12px;" id="t-timewall-desc">Смотри сайты, подписывайся на каналы и выполняй простые задания!</div>
                 
-                <iframe id="timewall-iframe" class="task-frame" src="about:blank" allow="geolocation"></iframe>
+                <iframe id="timewall-iframe" class="task-frame" src="about:blank" allow="fullscreen; geolocation"></iframe>
 
                 <button class="btn-upgrade" style="margin-top: 12px;" onclick="openTimeWallBrowser()" id="t-timewall-btn">🌐 ОТКРЫТЬ ВО ВНЕШНЕМ БРАУЗЕРЕ</button>
             </div>
@@ -695,14 +696,13 @@
 
         function getBitlabsUrl() {
             const userId = getUserIdForTasks();
-            const bitlabsToken = '780e236a-0cb6-488f-96cd-791cc00ecef6';
-            return `https://web.bitlabs.ai/?token=${bitlabsToken}&uid=${userId}`;
+            return `https://web.bitlabs.ai/?token=${BITLABS_TOKEN}&uid=${userId}`;
         }
 
-        // Обновленная функция ссылки для TimeWall (из раздела Direct Link)
+        // Обновленная функция прямой ссылки iFrame на офферволл TimeWall
         function getTimeWallUrl() {
             const userId = getUserIdForTasks();
-            return `https://timewall.io/users/login?oid=f0310ac908b9ae82&uid=${userId}`;
+            return `https://timewall.io/offerwall/${TIMEWALL_PLACEMENT_ID}/${userId}`;
         }
 
         function loadBitlabsIframe() {
@@ -754,7 +754,6 @@
             document.getElementById(`tab-${tabName}`).classList.add('active');
             el.classList.add('active');
 
-            // При переходе на вкладку "Задания" сразу загружается TimeWall
             if (tabName === 'tasks') {
                 loadTimeWallIframe();
             }
