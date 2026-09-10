@@ -636,7 +636,7 @@
         }
 
         function getUserIdForTasks() {
-            return tg?.initDataUnsafe?.user?.id || 'guest_user';
+            return tg?.initDataUnsafe?.user?.id || null;
         }
 
         function applyLanguage() {
@@ -696,13 +696,14 @@
 
         function getBitlabsUrl() {
             const userId = getUserIdForTasks();
+            if (!userId) return "about:blank";
             return `https://web.bitlabs.ai/?token=${BITLABS_TOKEN}&uid=${userId}`;
         }
 
-        // Обновленная функция прямой ссылки iFrame на офферволл TimeWall
         function getTimeWallUrl() {
             const userId = getUserIdForTasks();
-            return `https://timewall.io/offerwall/${TIMEWALL_PLACEMENT_ID}/${userId}`;
+            if (!userId) return "about:blank";
+            return `https://timewall.io/users/login?oid=${TIMEWALL_PLACEMENT_ID}&uid=${userId}`;
         }
 
         function loadBitlabsIframe() {
@@ -721,6 +722,7 @@
 
         function openBitlabsBrowser() {
             const bitlabsUrl = getBitlabsUrl();
+            if (bitlabsUrl === "about:blank") return notify(i18n[currentLang].authError);
             if (tg && tg.openLink) {
                 tg.openLink(bitlabsUrl);
             } else {
@@ -730,6 +732,7 @@
 
         function openTimeWallBrowser() {
             const timewallUrl = getTimeWallUrl();
+            if (timewallUrl === "about:blank") return notify(i18n[currentLang].authError);
             if (tg && tg.openLink) {
                 tg.openLink(timewallUrl);
             } else {
